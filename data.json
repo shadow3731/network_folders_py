@@ -1,0 +1,48 @@
+{
+    "exportable": "True",
+    "app_name": "Сетевое окружение МГП №2",
+    "app_icon": "icon.ico",
+    "window": {
+        "width": "800",
+        "height": "600",
+        "bg_color": "white",
+        "border_width": "1",
+        "border_style": "flat"
+    },
+    "password": "4444",
+    "additional_path": "Локальная папка",
+    "groups": {
+        "height": "60",
+        "width_diff": "5",
+        "height_diff": "5",
+        "bg_color": "white",
+        "group1": {
+            "name": "1-й этаж",
+            "buttons": {
+                "button1": {
+                    "button_name": "KAB-3-1",
+                    "path": "\\\\KAB-3-1",
+                    "protected": "False",
+                    "size": "1"
+                },
+                "button2": {
+                    "button_name": "Рентген",
+                    "path": "\\\\Doctor",
+                    "protected": "False",
+                    "size": "2"
+                }
+            }
+        },
+        "group2": {
+            "name": "2-й этаж",
+            "buttons": {
+                "button1": {
+                    "button_name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1"
+                }
+            }
+        }
+    }
+}
