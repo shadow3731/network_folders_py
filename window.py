@@ -11,9 +11,39 @@ class Window():
         self.root = tk.Tk()
         self.group = Group()
         
-    def start(self):
-        self._show()
+    def start(self, data: dict):
+        self._show_groups(data)
+        self._show_window(data)
         self.root.mainloop()
+        
+    def _configure_buttons(self, data: dict): 
+    
+        
+    def _show_groups(self, data: dict):
+        groups_data = data['groups']
+        
+        tk.LabelFrame(
+            master=self.root, 
+            text=groups_data['group1']['name']
+        ).place(
+            x=int(data['window']['padding']),
+            y=int(data['window']['padding']),
+            width=int(data['window']['width']) - 2 * int(data['window']['padding']),
+            height=int(data['window']['button_height']) + 4 * int(data['window']['padding']),
+        )
+        
+    def _show_window(self, data: dict):
+        self.root.title(data['app_name'])
+        self.root.iconbitmap(default=data['app_icon'])
+        self.root.resizable(width=False, height=False)
+        
+        self._center_window(
+            width=data['window']['width'],
+            height=data['window']['height']
+        )
+    
+        
+        
         
     def _show(self):
         data = self._load_data()
@@ -44,7 +74,7 @@ class Window():
         
         self._set_frame(bg=data['window']['bg_color'])
         
-    def _center_window(self, width="800", height="600"):
+    def _center_window(self, width="800", height="100"):
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         
