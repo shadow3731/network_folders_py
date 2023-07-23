@@ -3,7 +3,7 @@
     "app_name": "Сетевое окружение МГП №2",
     "app_icon": "icon.ico",
     "window": {
-        "width": "730",
+        "width": "680",
         "padding": "5",
         "button_width": "90",
         "button_height": "40",
@@ -20,13 +20,17 @@
                     "name": "KAB-3-1",
                     "path": "\\\\KAB-3-1",
                     "protected": "False",
-                    "size": "1"
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
                 },
                 "button2": {
                     "name": "Рентген",
                     "path": "\\\\Doctor",
                     "protected": "False",
-                    "size": "2"
+                    "size": "2",
+                    "bg_color": "white",
+                    "fg_color": "black"
                 }
             }
         },
@@ -37,7 +41,73 @@
                     "name": "KAB-12",
                     "path": "\\\\KAB-12",
                     "protected": "False",
-                    "size": "1"
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button2": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button3": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button4": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button5": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button6": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button7": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button8": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button9": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "4",
+                    "bg_color": "red",
+                    "fg_color": "white"
                 }
             }
         }

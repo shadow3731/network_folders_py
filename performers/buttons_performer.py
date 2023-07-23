@@ -48,7 +48,9 @@ class ButtonsPerformer():
                 tk.Button(
                     master=root,
                     text=button_data['name'],
-                    font=Font(family='Calibri', size=11, weight='bold')
+                    font=Font(family='Calibri', size=11, weight='bold'),
+                    bg=button_data['bg_color'],
+                    fg=button_data['fg_color']
                 ).place(
                     x=positions[i][j][0],
                     y=positions[i][j][1],
