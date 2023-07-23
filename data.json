@@ -6,7 +6,7 @@
         "width": "730",
         "padding": "5",
         "button_width": "90",
-        "button_height": "20",
+        "button_height": "40",
         "bg_color": "white"
     },
     "password": "4444",
@@ -17,13 +17,13 @@
             "name": "1-й этаж",
             "buttons": {
                 "button1": {
-                    "button_name": "KAB-3-1",
+                    "name": "KAB-3-1",
                     "path": "\\\\KAB-3-1",
                     "protected": "False",
                     "size": "1"
                 },
                 "button2": {
-                    "button_name": "Рентген",
+                    "name": "Рентген",
                     "path": "\\\\Doctor",
                     "protected": "False",
                     "size": "2"
@@ -34,7 +34,7 @@
             "name": "2-й этаж",
             "buttons": {
                 "button1": {
-                    "button_name": "KAB-12",
+                    "name": "KAB-12",
                     "path": "\\\\KAB-12",
                     "protected": "False",
                     "size": "1"
