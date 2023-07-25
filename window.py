@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from cursor import Cursor
+from performers.menu_performer import MenuPerformer
 from performers.groups_performer import GroupsPerformer
 from performers.buttons_performer import ButtonsPerformer
 
@@ -10,10 +11,13 @@ class Window():
     def __init__(self):
         self.root = tk.Tk()
         self.cursor = Cursor()
+        self.mp = MenuPerformer()
         self.gp = GroupsPerformer(self.cursor)
         self.bp = ButtonsPerformer(self.cursor)
         
     def start(self, data: dict):
+        self.mp.show_menu(self.root)
+        
         self._set_calculator_values(data)
         buttons_pos = self.bp.configure_buttons(data)
         

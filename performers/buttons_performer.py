@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter.font import Font
 
+import os, subprocess, platform, threading
+
 from cursor import Cursor
+from dialog import Dialog
 
 class ButtonsPerformer():
     
@@ -45,15 +48,105 @@ class ButtonsPerformer():
             for j in range(len(positions[i])):
                 button_data = group_data['buttons'][f'button{j+1}']
                 
-                tk.Button(
+                button = tk.Button(
                     master=root,
                     text=button_data['name'],
                     font=Font(family='Calibri', size=11, weight='bold'),
+                    relief=tk.SOLID,
+                    borderwidth=1,
                     bg=button_data['bg_color'],
                     fg=button_data['fg_color']
-                ).place(
+                )
+                
+                button.bind(
+                    '<Button-1>', 
+                    lambda e, 
+                        button=button,
+                        data=button_data, 
+                        extra_dir=data['additional_path']: 
+                            self._open_directory(e, button, data, extra_dir)
+                )
+                    
+                button.place(
                     x=positions[i][j][0],
                     y=positions[i][j][1],
                     width=positions[i][j][2],
                     height=positions[i][j][3]
                 )
+                
+    def _open_directory(
+        self, 
+        event, 
+        button: tk.Button, 
+        b_data: dict, 
+        extra_dir: str
+    ):
+        directory = f"{b_data['path']}{extra_dir}"
+        
+        if platform.system() == 'Windows':
+            try:
+                os.startfile(directory)
+            except FileNotFoundError as e:
+                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except PermissionError as e:
+                message = f"У этой учетной записи недостаточно прав для открытия этого файла или папки.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except TypeError as e:
+                message = f"Неправильный тип данных. Возможно путь к файлу или папке указан с ошибками.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except OSError as e:
+                message = f"Ошибка в системе.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+        else:
+            try:
+                subprocess.Popen(['xdg-open', directory])
+            except subprocess.CalledProcessError as e:
+                message = f"Ошибка выполнения консольной команды xdg-open.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except FileNotFoundError as e:
+                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except OSError as e:
+                message = f"Ошибка в системе.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except ValueError as e:
+                message = f"Неверное значение.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+            except subprocess.TimeoutExpired as e:
+                message = f"Превышено время ожидания открытия файла или папки.\n\n{e}"
+                threading.Thread(
+                    target=Dialog().show_error,
+                    args=(message,)
+                ).start()
+                
+        button.config(
+            relief=tk.SOLID,
+            borderwidth=1,
+            bg=b_data['bg_color'],
+            fg=b_data['fg_color']
+        )

@@ -23,7 +23,7 @@ class Cursor():
             
         button_positions: tuple = (
             self.x + self.padding,
-            self.y + 3*self.padding,
+            self.y + 4*self.padding,
             int(button['size'])*self.width + (int(button['size'])-1)*self.padding,
             self.height - 2*self.padding
         )
@@ -46,4 +46,4 @@ class Cursor():
     
     def move_to_new_group(self):
         self.x = self.padding
-        self.y = self.height + 4*self.padding
+        self.y += self.height + 3*self.padding
