@@ -1,19 +1,12 @@
-import json
-
-from window import Window
+from performers.data_performer import DataPerformer
+from app import Application
 
 def start():
-    data = _load_data()
+    dp = DataPerformer()
+    service_data: dict = dp.load_service_data()
+    appearance_data: dict = dp.load_appearance_data(service_data['path'])
     
-    Window().start(data)
-    
-def _load_data() -> dict:
-    try:
-        with open('data.json', encoding='utf8') as f:
-            return json.load(f)
-                
-    except OSError as e:
-        print(e)
+    Application().start(service_data, appearance_data)
 
 if __name__ == '__main__':
     start()
