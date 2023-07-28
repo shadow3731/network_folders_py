@@ -64,7 +64,7 @@ class ButtonsPerformer():
                         button=button,
                         data=button_data, 
                         extra_dir=data['additional_path']: 
-                            self._open_directory(e, button, data, extra_dir)
+                            self._start_action(e, button, data, extra_dir)
                 )
                     
                 button.place(
@@ -74,79 +74,63 @@ class ButtonsPerformer():
                     height=positions[i][j][3]
                 )
                 
-    def _open_directory(
+    def _start_action(
         self, 
         event, 
         button: tk.Button, 
         b_data: dict, 
         extra_dir: str
     ):
+        button_name = button['text']
+        button.config(text='Подождите')
+        
         directory = f"{b_data['path']}{extra_dir}"
         
-        if platform.system() == 'Windows':
-            try:
-                os.startfile(directory)
-            except FileNotFoundError as e:
-                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except PermissionError as e:
-                message = f"У этой учетной записи недостаточно прав для открытия этого файла или папки.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except TypeError as e:
-                message = f"Неправильный тип данных. Возможно путь к файлу или папке указан с ошибками.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except OSError as e:
-                message = f"Ошибка в системе.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-        else:
-            try:
-                subprocess.Popen(['xdg-open', directory])
-            except subprocess.CalledProcessError as e:
-                message = f"Ошибка выполнения консольной команды xdg-open.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except FileNotFoundError as e:
-                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except OSError as e:
-                message = f"Ошибка в системе.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except ValueError as e:
-                message = f"Неверное значение.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-            except subprocess.TimeoutExpired as e:
-                message = f"Превышено время ожидания открытия файла или папки.\n\n{e}"
-                threading.Thread(
-                    target=Dialog().show_error,
-                    args=(message,)
-                ).start()
-                
+        threading.Thread(
+            target=self._open_directory,
+            args=(directory, button, button_name)
+        ).start()
+
         button.config(
             relief=tk.SOLID,
             borderwidth=1,
             bg=b_data['bg_color'],
             fg=b_data['fg_color']
         )
+    
+    def _open_directory(self, dir: str, btn: tk.Button, name: str):
+        if platform.system() == 'Windows':
+            try:
+                os.startfile(dir)
+            except FileNotFoundError as e:
+                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
+                Dialog().show_error(message)
+            except PermissionError as e:
+                message = f"У этой учетной записи недостаточно прав для открытия этого файла или папки.\n\n{e}"
+                Dialog().show_error(message)
+            except TypeError as e:
+                message = f"Неправильный тип данных. Возможно путь к файлу или папке указан с ошибками.\n\n{e}"
+                Dialog().show_error(message)
+            except OSError as e:
+                message = f"Ошибка в системе.\n\n{e}"
+                Dialog().show_error(message)
+        else:
+            try:
+                subprocess.Popen(['xdg-open', dir])
+            except subprocess.CalledProcessError as e:
+                message = f"Ошибка выполнения консольной команды xdg-open.\n\n{e}"
+                Dialog().show_error(message)
+            except FileNotFoundError as e:
+                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
+                Dialog().show_error(message)
+            except OSError as e:
+                message = f"Ошибка в системе.\n\n{e}"
+                Dialog().show_error(message)
+            except ValueError as e:
+                message = f"Неверное значение.\n\n{e}"
+                Dialog().show_error(message)
+            except subprocess.TimeoutExpired as e:
+                message = f"Превышено время ожидания открытия файла или папки.\n\n{e}"
+                Dialog().show_error(message)
+                
+        btn.config(text=name)
