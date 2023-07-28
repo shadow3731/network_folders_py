@@ -1,0 +1,131 @@
+{
+    "app_name": "\u0421\u0435\u0442\u0435\u0432\u043e\u0435 \u043e\u043a\u0440\u0443\u0436\u0435\u043d\u0438\u0435 \u041c\u0413\u041f \u21162",
+    "window": {
+        "width": "680",
+        "padding": "5",
+        "button_width": "90",
+        "button_height": "40"
+    },
+    "additional_path": "\u041b\u043e\u043a\u0430\u043b\u044c\u043d\u0430\u044f \u043f\u0430\u043f\u043a\u0430\\",
+    "groups": {
+        "group1": {
+            "name": "1-\u0439 \u044d\u0442\u0430\u0436",
+            "buttons": {
+                "button1": {
+                    "name": "KAB-3-1",
+                    "path": "\\\\statist2\\",
+                    "protected": "False",
+                    "size": "2",
+                    "bg_color": "yellow",
+                    "fg_color": "black"
+                },
+                "button2": {
+                    "name": "\u0420\u0435\u043d\u0442\u0433\u0435\u043d",
+                    "path": "\\\\Doctor\\",
+                    "protected": "False",
+                    "size": "2",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                }
+            }
+        },
+        "group2": {
+            "name": "2-\u0439 \u044d\u0442\u0430\u0436",
+            "buttons": {
+                "button1": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12\\",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button2": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button3": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button4": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button5": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button6": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button7": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button8": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                },
+                "button9": {
+                    "name": "KAB-12",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "4",
+                    "bg_color": "red",
+                    "fg_color": "white"
+                },
+                "button10": {
+                    "name": "KAB-13",
+                    "path": "\\\\KAB-12",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                }
+            }
+        },
+        "group3": {
+            "name": "3-\u0439 \u044d\u0442\u0430\u0436",
+            "buttons": {
+                "button1": {
+                    "name": "KAB-32-1",
+                    "path": "\\\\statist\\",
+                    "protected": "False",
+                    "size": "1",
+                    "bg_color": "white",
+                    "fg_color": "black"
+                }
+            }
+        }
+    }
+}

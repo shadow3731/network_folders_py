@@ -6,6 +6,10 @@ class WindowPerformer():
         pass
     
     def show_window(self, root: tk.Tk, data: dict = None, groups_pos: list = None):
+        root.title('Network Folders')
+        root.iconbitmap(default='files/icon.ico')
+        root.resizable(width=False, height=False)
+        
         window_width = "500"
         window_height = "0"
         
@@ -24,10 +28,6 @@ class WindowPerformer():
             width=window_width,
             height=window_height
         )
-        
-        root.title('Network Folders')
-        root.iconbitmap(default='files/icon.ico')
-        root.resizable(width=False, height=False)
         
     def center_window(self, root: tk.Tk, width, height):
         screen_width = root.winfo_screenwidth()

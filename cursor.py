@@ -28,7 +28,7 @@ class Cursor():
             self.height - 2*self.padding
         )
         
-        self.x += int(button['size'])*self.width + self.padding
+        self.x += int(button['size'])*self.width + int(button['size'])*self.padding
             
         return button_positions
     
