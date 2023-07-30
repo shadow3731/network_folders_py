@@ -81,7 +81,7 @@ class ButtonsPerformer():
         b_data: dict, 
         extra_dir: str
     ):
-        button_name = button['text']
+        button_name = b_data['name']
         button.config(text='Подождите')
         
         directory = f"{b_data['path']}{extra_dir}"
