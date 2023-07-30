@@ -5,6 +5,7 @@ class DataPerformer():
     def __init__(self):
         self.service_filepath = 'files/local_data.picke'
         self.appearance_filepath = 'files/visual.json'
+        self.default_appearance_filename = 'visual.json'
                 
     def load_service_data(self) -> dict:
         self._create_if_not_exists('service_data')

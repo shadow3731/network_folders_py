@@ -35,7 +35,11 @@ class MenuPerformer():
     ) -> tk.Menu:
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
         config_file_menu.add_command(
-            label='Указать путь', 
+            label='Создать',
+            command=self._create_config_file
+        )
+        config_file_menu.add_command(
+            label='Открыть', 
             command=lambda: self._show_win_to_change_entry(
                 root=root,
                 data=DataPerformer().load_service_data()['appearance_file_path']
@@ -52,6 +56,14 @@ class MenuPerformer():
         )
         
         return config_file_menu
+    
+    def _create_config_file(self):
+        filedir = Dialog().save_file_dialog()
+        if filedir != None:
+            dp = DataPerformer()
+            
+        
+        print(Dialog().save_file_dialog())
     
     def _show_win_to_change_entry(
         self, 
