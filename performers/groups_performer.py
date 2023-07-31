@@ -18,16 +18,17 @@ class GroupsPerformer():
         return positions
     
     def show_groups(self, data: dict, positions: list, root: tk.Tk):
-        for i in range(len(positions)):
-            group_data: dict = data['groups'][f'group{i+1}']
-            
-            tk.LabelFrame(
-                master=root,
-                text=group_data['name'],
-                font=Font(family='Calibri', size=11, weight='bold')
-            ).place(
-                x=positions[i][0],
-                y=positions[i][1],
-                width=positions[i][2],
-                height=positions[i][3]
-            )
+        if data:
+            for i in range(len(positions)):
+                group_data: dict = data['groups'][f'group{i+1}']
+                
+                tk.LabelFrame(
+                    master=root,
+                    text=f'Group {i+1}' if not group_data.get('name') else group_data['name'],
+                    font=Font(family='Calibri', size=11, weight='bold')
+                ).place(
+                    x=positions[i][0],
+                    y=positions[i][1],
+                    width=positions[i][2],
+                    height=positions[i][3]
+                )

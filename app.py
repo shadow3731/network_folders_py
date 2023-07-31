@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from cursor import Cursor
+from dialog import Dialog
 from performers.window_performer import WindowPerformer
 from performers.menu_performer import MenuPerformer
 from performers.groups_performer import GroupsPerformer
@@ -38,20 +39,44 @@ class Application():
                     root=self.root
                 )
             
-                self.wp.show_window(self.root, a_data, groups_pos)
+                self.wp.show_window(
+                    root=self.root, 
+                    data=a_data, 
+                    groups_pos=groups_pos
+                )
                 
             else:
-                self.wp.show_window(self.root, a_data)
+                self.wp.show_window(root=self.root, data=a_data)
             
         else:
-            self.wp.show_window(self.root)
+            self.wp.show_window(root=self.root)
             
         self.root.mainloop()
         
     def _set_cursor_values(self, data: dict):
-        self.cursor.x = int(data['window']['padding'])
-        self.cursor.y = int(data['window']['padding'])
-        self.cursor.width = int(data['window']['button_width'])
-        self.cursor.height = int(data['window']['button_height'])
-        self.cursor.padding = int(data['window']['padding'])
-        self.cursor.max_width = int(data['window']['width'])
+        self.cursor.x = 5
+        self.cursor.y = 5
+        self.cursor.width = 90
+        self.cursor.height = 40
+        self.cursor.padding = 5
+        self.cursor.screen_width = 680
+        
+        if isinstance(data, dict) and data.get('window') and isinstance(data['window'], dict):
+            try:
+                if data['window'].get('padding'):
+                    self.cursor.x = int(data['window']['padding'])
+                    self.cursor.y = int(data['window']['padding'])
+                    self.cursor.padding = int(data['window']['padding'])
+                    
+                if data['window'].get('button_width'):
+                    self.cursor.width = int(data['window']['button_width'])
+                    
+                if data['window'].get('button_height'):
+                    self.cursor.height = int(data['window']['button_height'])
+                    
+                if data['window'].get('width'):
+                    self.cursor.screen_width = int(data['window']['width'])
+            
+            except ValueError as e:
+                message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
+                Dialog().show_error(message)

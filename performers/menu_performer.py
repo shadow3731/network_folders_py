@@ -17,6 +17,7 @@ class MenuPerformer():
         options_menu = self._show_options_menu(root)
         
         self.menu.add_cascade(label='Опции', menu=options_menu)
+        self.menu.add_cascade(label='Справка')
         
     def _show_options_menu(self, root: tk.Tk) -> tk.Menu:
         options_menu = tk.Menu(master=root, tearoff=0)
@@ -24,64 +25,52 @@ class MenuPerformer():
             label='Файл конфигурации',
             menu=self._show_config_file_menu(options_menu, root)
         )
-        options_menu.add_command(label='Изменить пароль')
+        options_menu.add_command(
+            label='Изменить пароль',
+            command=lambda: self._set_new_password(root)
+        )
         
         return options_menu
     
     def _show_config_file_menu(
         self, 
         master_menu: tk.Menu, 
-        root: tk.Menu
+        root: tk.Tk
     ) -> tk.Menu:
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
         config_file_menu.add_command(
             label='Создать',
-            command=self._create_config_file
+            command=self._create_visual_file
         )
         config_file_menu.add_command(
             label='Открыть', 
-            command=lambda: self._show_win_to_change_entry(
-                root=root,
-                data=DataPerformer().load_service_data()['appearance_file_path']
-            )
+            command=self._open_visual_file
         )
+        dp = DataPerformer()
         config_file_menu.add_command(
             label='Изменить',
-            command=lambda: self._show_win_to_change_text(
+            command=lambda: self._edit_visual_file(
                 root=root,
-                data=DataPerformer().load_appearance_data(
-                    filepath=DataPerformer().load_service_data()['appearance_file_path']
+                data=dp.load_appearance_data(
+                    filepath=dp.load_service_data()[dp.a_data_key]
                 )
             )
         )
         
         return config_file_menu
     
-    def _create_config_file(self):
-        filedir = Dialog().save_file_dialog()
-        if filedir != None:
-            dp = DataPerformer()
-            
-        
-        print(Dialog().save_file_dialog())
-    
-    def _show_win_to_change_entry(
-        self, 
-        root: tk.Tk, 
-        data: str = ''
-    ):
+    def _set_new_password(self, root: tk.Menu) -> bool:
         modal_window = tk.Toplevel(root)
         
-        WindowPerformer().center_window(modal_window, "400", "60")
-        
-        modal_window.title('Указать путь к папке с файлом визуализации')
-        self._confugure_window(modal_window, root)
+        WindowPerformer().center_window(modal_window, 400, 60)
+        WindowPerformer().configure_window(modal_window, root)
+        modal_window.title('Введите новый пароль')
         
         entry = tk.Entry(
             master=modal_window,
-            width=modal_window.winfo_screenwidth()
+            width=modal_window.winfo_screenwidth(),
+            show='*'
         )
-        entry.insert(0, data)
         entry.pack(anchor=tk.CENTER, padx=5, pady=5)
         entry.focus_set()
         
@@ -89,27 +78,34 @@ class MenuPerformer():
             master=modal_window, 
             text='Сохранить',
             width=12,
-            command=lambda: self._save_data(
-                root=modal_window, 
-                data=entry.get()
+            command=lambda: self._save_new_password(
+                window=modal_window,
+                password=entry.get()
             )
         )
         button.pack(side=tk.RIGHT, padx=5)
         
         modal_window.wait_window()
         
-    def _show_win_to_change_text(
-        self, 
-        root: tk.Tk, 
-        data: dict = None
-    ):
+    def _save_new_password(self, window: tk.Toplevel, password: str):
+        window.destroy()
+        DataPerformer().save_password(password)
+    
+    def _create_visual_file(self):
+        filedir = Dialog().save_file_dialog()
+        self._save_file_directory(filedir)
+            
+    def _open_visual_file(self):
+        filedir = Dialog().open_file_dialog()
+        self._save_file_directory(filedir)
+        
+    def _edit_visual_file(self, root: tk.Menu, data: dict):
         if data:
             modal_window = tk.Toplevel(root)
             
-            WindowPerformer().center_window(modal_window, "650", "500")
-            
+            WindowPerformer().center_window(modal_window, 650, 500)
+            WindowPerformer().configure_window(modal_window, root)
             modal_window.title('Редактировать файл визуализации')
-            self._confugure_window(modal_window, root)
             
             frame = tk.Frame(
                 master=modal_window,
@@ -141,10 +137,9 @@ class MenuPerformer():
                 master=modal_window, 
                 text='Сохранить',
                 width=12,
-                command=lambda: self._save_data(
+                command=lambda: self._save_visual_data(
                     root=modal_window, 
-                    data=text.get(1.0, tk.END),
-                    is_entry=False
+                    data=text.get(1.0, tk.END)
                 )
             )
             button.pack(side=tk.BOTTOM, anchor=tk.E, padx=5, pady=5)
@@ -154,38 +149,24 @@ class MenuPerformer():
         else:
             message = 'Укажите путь к файлу визуализации.'
             Dialog().show_error(message)
-        
-    def _confugure_window(self, window: tk.Toplevel, root: tk.Tk):
-        window.resizable(width=False, height=False)
-        window.iconbitmap('')
-        window.attributes('-toolwindow', 1)
-        window.transient(root)
-        
-    def _save_data(
-        self, 
-        root: tk.Toplevel, 
-        data: str, 
-        is_entry: bool = True
-    ):
-        dp = DataPerformer()
-        
-        if is_entry:
-            service_data: dict = dp.load_service_data()
-            service_data['appearance_file_path'] = data
+            
+    def _save_file_directory(self, dir: str):
+        if dir:
+            dp = DataPerformer()
+            service_data = dp.load_service_data()
+            service_data[dp.a_data_key] = dir
             dp.save_service_data(service_data)
-            
-            root.destroy()
-            
-        else:
-            try:
-                dp.save_appearance_data(
-                    savabale_data=json.loads(data),
-                    filepath=dp.load_service_data()['appearance_file_path']
-                )
-                
-                root.destroy()
-                
-            except json.JSONDecodeError as e:
-                message = f'Не удалось сохранить файл конфигурации. Проверьте синтаксис файла. Возможно присутствует лишний или отсутсвует необходимый знак.\n\n{e}'
-                Dialog().show_error(message)
         
+    def _save_visual_data(self, root: tk.Toplevel, data: str):
+        dp = DataPerformer()
+        try:
+            dp.save_appearance_data(
+                savabale_data=json.loads(data),
+                filepath=dp.load_service_data()[dp.a_data_key]
+            )
+                
+            root.destroy()
+                
+        except json.JSONDecodeError as e:
+            message = f'Не удалось сохранить файл конфигурации. Проверьте синтаксис файла. Возможно присутствует лишний или отсутсвует необходимый знак.\n\n{e}'
+            Dialog().show_error(message)

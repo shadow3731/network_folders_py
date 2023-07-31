@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from dialog import Dialog
+
 class WindowPerformer():
     
     def __init__(self):
@@ -7,21 +9,35 @@ class WindowPerformer():
     
     def show_window(self, root: tk.Tk, data: dict = None, groups_pos: list = None):
         root.title('Network Folders')
-        root.iconbitmap(default='files/icon.ico')
+        root.iconbitmap(default='icon.ico')
         root.resizable(width=False, height=False)
         
-        window_width = "500"
-        window_height = "0"
+        window_width = 500
+        window_height = 0
         
-        if data:
-            root.title(data['app_name'])
+        if isinstance(data, dict):
+            if data.get('app_name'):
+                root.title(data['app_name'])
             
-            window_width = data['window']['width']
+            try:
+                if data.get('window') and isinstance(data['window'], dict):
+                    if data['window'].get('width'):
+                        window_width = int(data['window']['width'])
+                        
+                    if data['window'].get('padding'):
+                        window_padding = int(data['window']['padding'])
+                        
+            except ValueError as e:
+                message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
+                Dialog().show_error(message)
+                
+                window_width = 680
+                window_padding = 5
         
             if groups_pos and len(groups_pos) > 0:
-                window_height = groups_pos[-1][1] + groups_pos[-1][-1] + int(data['window']['padding'])
+                window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
             else:
-                window_height = "0"
+                window_height = 0
             
         self.center_window(
             root=root,
@@ -29,11 +45,17 @@ class WindowPerformer():
             height=window_height
         )
         
-    def center_window(self, root: tk.Tk, width, height):
+    def center_window(self, root: tk.Tk, width: int, height: int):
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
         
-        x_offset = (screen_width - int(width)) // 2
-        y_offset = (screen_height - int(height)) // 2
+        x_offset = (screen_width - width) // 2
+        y_offset = (screen_height - height) // 2
         
         root.geometry(f"{width}x{height}+{x_offset}+{y_offset}")
+        
+    def configure_window(self, window: tk.Tk, root: tk.Tk):
+        window.resizable(width=False, height=False)
+        window.iconbitmap('')
+        window.attributes('-toolwindow', 1)
+        window.transient(root)
