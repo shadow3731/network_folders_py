@@ -36,6 +36,8 @@ class WindowPerformer():
         
             if groups_pos and len(groups_pos) > 0:
                 window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
+                if window_height > 570:
+                    window_height = 570
             else:
                 window_height = 0
             

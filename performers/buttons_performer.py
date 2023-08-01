@@ -69,6 +69,15 @@ class ButtonsPerformer():
                         extra_dir='' if not data.get('additional_path') else data['additional_path']: 
                             self._start_action(e, button, data, extra_dir)
                 )
+                
+                button.bind(
+                    '<Return>', 
+                    lambda e, 
+                        button=button,
+                        data=button_data, 
+                        extra_dir='' if not data.get('additional_path') else data['additional_path']: 
+                            self._start_action(e, button, data, extra_dir)
+                )
                     
                 button.place(
                     x=positions[i][j][0],

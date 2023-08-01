@@ -25,10 +25,10 @@ class MenuPerformer():
             label='Файл конфигурации',
             menu=self._show_config_file_menu(options_menu, root)
         )
-        options_menu.add_command(
-            label='Изменить пароль',
-            command=lambda: self._set_new_password(root)
-        )
+        # options_menu.add_command(
+        #     label='Изменить пароль',
+        #     command=lambda: self._set_new_password(root)
+        # )
         
         return options_menu
     
@@ -59,37 +59,37 @@ class MenuPerformer():
         
         return config_file_menu
     
-    def _set_new_password(self, root: tk.Menu) -> bool:
-        modal_window = tk.Toplevel(root)
+    # def _set_new_password(self, root: tk.Menu) -> bool: 
+    #     modal_window = tk.Toplevel(root)
         
-        WindowPerformer().center_window(modal_window, 400, 60)
-        WindowPerformer().configure_window(modal_window, root)
-        modal_window.title('Введите новый пароль')
+    #     WindowPerformer().center_window(modal_window, 400, 60)
+    #     WindowPerformer().configure_window(modal_window, root)
+    #     modal_window.title('Введите новый пароль')
         
-        entry = tk.Entry(
-            master=modal_window,
-            width=modal_window.winfo_screenwidth(),
-            show='*'
-        )
-        entry.pack(anchor=tk.CENTER, padx=5, pady=5)
-        entry.focus_set()
+    #     entry = tk.Entry(
+    #         master=modal_window,
+    #         width=modal_window.winfo_screenwidth(),
+    #         show='*'
+    #     )
+    #     entry.pack(anchor=tk.CENTER, padx=5, pady=5)
+    #     entry.focus_set()
         
-        button = tk.Button(
-            master=modal_window, 
-            text='Сохранить',
-            width=12,
-            command=lambda: self._save_new_password(
-                window=modal_window,
-                password=entry.get()
-            )
-        )
-        button.pack(side=tk.RIGHT, padx=5)
+    #     button = tk.Button(
+    #         master=modal_window, 
+    #         text='Сохранить',
+    #         width=12,
+    #         command=lambda: self._save_new_password(
+    #             window=modal_window,
+    #             password=entry.get()
+    #         )
+    #     )
+    #     button.pack(side=tk.RIGHT, padx=5)
         
-        modal_window.wait_window()
+    #     modal_window.wait_window()
         
-    def _save_new_password(self, window: tk.Toplevel, password: str):
-        window.destroy()
-        DataPerformer().save_password(password)
+    # def _save_new_password(self, window: tk.Toplevel, password: str):
+    #     window.destroy()
+    #     DataPerformer().save_password(password)
     
     def _create_visual_file(self):
         filedir = Dialog().save_file_dialog()
@@ -107,15 +107,22 @@ class MenuPerformer():
             WindowPerformer().configure_window(modal_window, root)
             modal_window.title('Редактировать файл визуализации')
             
-            frame = tk.Frame(
+            upper_frame = tk.Frame(
                 master=modal_window,
                 width=modal_window.winfo_screenwidth(),
                 height=modal_window.winfo_screenheight()-45
             )
-            frame.pack(padx=5, pady=5)
+            upper_frame.pack(padx=5, pady=(5, 0))
+            
+            lower_frame = tk.Frame(
+                master=modal_window,
+                width=modal_window.winfo_screenwidth(),
+                height=modal_window.winfo_screenheight() - modal_window.winfo_screenheight()-45
+            )
+            lower_frame.pack(fill=tk.X, padx=5, pady=(0, 5))
             
             text = tk.Text(
-                master=frame, 
+                master=upper_frame, 
                 width=78,
                 height=28,
                 wrap=tk.WORD
@@ -123,7 +130,7 @@ class MenuPerformer():
             text.insert(1.0, json.dumps(data, ensure_ascii=False, indent=4))
             
             y_scrollbar = tk.Scrollbar(
-                master=frame,
+                master=upper_frame,
                 command=text.yview
             )
             
@@ -131,10 +138,28 @@ class MenuPerformer():
             text.pack(side=tk.LEFT, anchor=tk.NW)
             text.focus_set()
             
+            label = tk.Label(
+                master=lower_frame, 
+                text='Строка: 0, символ: 0'
+            )
+            label.pack(side=tk.LEFT, padx=5, pady=5)
+            
+            text.bind(
+                '<KeyRelease>', 
+                lambda e, text=text, label=label: 
+                    self._show_cursor_position(e, text, label)
+            )
+            
+            text.bind(
+                '<ButtonRelease-1>', 
+                lambda e, text=text, label=label: 
+                    self._show_cursor_position(e, text, label)
+            )
+            
             y_scrollbar.pack(side=tk.LEFT, fill=tk.Y)
             
             button = tk.Button(
-                master=modal_window, 
+                master=lower_frame, 
                 text='Сохранить',
                 width=12,
                 command=lambda: self._save_visual_data(
@@ -142,7 +167,7 @@ class MenuPerformer():
                     data=text.get(1.0, tk.END)
                 )
             )
-            button.pack(side=tk.BOTTOM, anchor=tk.E, padx=5, pady=5)
+            button.pack(side=tk.RIGHT, padx=5, pady=5)
             
             modal_window.wait_window()
         
@@ -170,3 +195,14 @@ class MenuPerformer():
         except json.JSONDecodeError as e:
             message = f'Не удалось сохранить файл конфигурации. Проверьте синтаксис файла. Возможно присутствует лишний или отсутсвует необходимый знак.\n\n{e}'
             Dialog().show_error(message)
+            
+    def _show_cursor_position(
+        self, 
+        event, 
+        text: tk.Text, 
+        label: tk.Label
+    ):
+        cursor = text.index(tk.INSERT)
+        r, c = map(int, cursor.split('.'))
+        label.config(text=f'Строка: {r}, символ: {c}')
+        

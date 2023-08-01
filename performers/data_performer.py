@@ -8,7 +8,7 @@ class DataPerformer():
         self.service_filepath = 'files/local_data.picke'
         self.appearance_filepath = 'files/local_visual.json'
         
-        self.password_filename = 'password.picke'
+        # self.password_filename = 'password.picke'
         
         self.a_data_key: str = 'appearance_file_path'
                 
@@ -29,10 +29,10 @@ class DataPerformer():
                     data = json.load(f)
                     self.save_appearance_data(data, self.appearance_filepath)
                     
-                    self._create_if_not_exists(
-                        target='password',
-                        filepath=filepath
-                    )
+                    # self._create_if_not_exists(
+                    #     target='password',
+                    #     filepath=filepath
+                    # )
                     
                     return data
                 
@@ -40,7 +40,7 @@ class DataPerformer():
                 with open(self.appearance_filepath, encoding='utf8') as f:
                     return json.load(f)
                 
-        except json.JSONDecodeError as e:
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
             message = f'Не удалось сохранить файл конфигурации. Проверьте синтаксис файла. Возможно присутствует лишний или отсутсвует необходимый знак.\n\n{e}'
             Dialog().show_error(message)
         
@@ -50,20 +50,24 @@ class DataPerformer():
         with open(filepath, 'w', encoding='utf8') as f:
             json.dump(savabale_data, f, indent=4)
             
-    def load_password(self) -> str:
-        filepath = f'{self.load_service_data()[self.a_data_key]}/{self.password_filename}'
-        if os.path.exists()
+    # def load_password(self) -> str:
+    #     filepath = f'{self.load_service_data()[self.a_data_key]}/{self.password_filename}'
+    #     if os.path.exists(filepath):
+    #         with open(filepath, 'rb') as f:
+    #             return pickle.load(f)
             
-    def save_password(self, savable_psw: str):
-        filepath = self.load_service_data()[self.a_data_key]
+    #     return None
+            
+    # def save_password(self, savable_psw: str):
+    #     filepath = self.load_service_data()[self.a_data_key]
         
-        self._create_if_not_exists(
-            target='password',
-            filepath=filepath
-        )
+    #     self._create_if_not_exists(
+    #         target='password',
+    #         filepath=filepath
+    #     )
         
-        with open(filepath, 'wb') as f:
-            pickle.dump(savable_psw, f)
+    #     with open(filepath, 'wb') as f:
+    #         pickle.dump(savable_psw, f)
     
     def _create_if_not_exists(self, target: str, filepath=None):
         if target == 'service_data':
@@ -73,13 +77,13 @@ class DataPerformer():
                 with open(self.service_filepath, 'wb') as f:
                     pickle.dump(data, f)
                     
-        elif target == 'password':
-            match: re.Match[str] = re.search(r'\\([^\\]+)$', filepath)
-            if match:
-                psw_filepath = f'{filepath[:match.start()]}\\password.picke'
-                if not os.path.exists(psw_filepath):
-                    data = {'password': '1111'}
+        # elif target == 'password':
+        #     match: re.Match[str] = re.search(r'[\\/]([^\\/]+)$', filepath)
+        #     if match:
+        #         psw_filepath = f'{filepath[:match.start()]}\\{self.password_filename}'
+        #         if not os.path.exists(psw_filepath):
+        #             data = {'password': '1111'}
                     
-                    with open(psw_filepath, 'wb') as f:
-                        pickle.dump(data, f)
+        #             with open(psw_filepath, 'wb') as f:
+        #                 pickle.dump(data, f)
     
