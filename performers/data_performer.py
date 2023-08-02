@@ -5,6 +5,8 @@ from dialog import Dialog
 class DataPerformer():
     
     def __init__(self):
+        self.documents_folder = self._get_documents_folder()
+        
         self.service_filepath = 'files/local_data.picke'
         self.appearance_filepath = 'files/local_visual.json'
         
@@ -87,3 +89,10 @@ class DataPerformer():
         #             with open(psw_filepath, 'wb') as f:
         #                 pickle.dump(data, f)
     
+    def _get_documents_folder(self) -> str:
+        if os.name == 'nt':
+            return os.path.join(os.environ['USERPROFILE'], 'Documents')
+        elif os.name == 'posix':
+            return os.path.join(os.path.expanduser('~'), 'Documents')
+        else:
+            return None
