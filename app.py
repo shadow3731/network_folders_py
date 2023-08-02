@@ -50,7 +50,7 @@ class Application():
             
         else:
             self.wp.show_window(root=self.root)
-            
+        
         self.root.mainloop()
         
     def _set_cursor_values(self, data: dict):
