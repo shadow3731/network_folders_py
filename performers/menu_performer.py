@@ -17,7 +17,7 @@ class MenuPerformer():
         options_menu = self._show_options_menu(root)
         
         self.menu.add_cascade(label='Опции', menu=options_menu)
-        self.menu.add_cascade(label='Справка')
+        # self.menu.add_cascade(label='Справка')
         
     def _show_options_menu(self, root: tk.Tk) -> tk.Menu:
         options_menu = tk.Menu(master=root, tearoff=0)
@@ -38,24 +38,24 @@ class MenuPerformer():
         root: tk.Tk
     ) -> tk.Menu:
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
-        config_file_menu.add_command(
-            label='Создать',
-            command=self._create_visual_file
-        )
+        # config_file_menu.add_command(
+        #     label='Создать',
+        #     command=self._create_visual_file
+        # )
         config_file_menu.add_command(
             label='Открыть', 
             command=self._open_visual_file
         )
-        dp = DataPerformer()
-        config_file_menu.add_command(
-            label='Изменить',
-            command=lambda: self._edit_visual_file(
-                root=root,
-                data=dp.load_appearance_data(
-                    filepath=dp.load_service_data()[dp.a_data_key]
-                )
-            )
-        )
+        # dp = DataPerformer()
+        # config_file_menu.add_command(
+        #     label='Изменить',
+        #     command=lambda: self._edit_visual_file(
+        #         root=root,
+        #         data=dp.load_appearance_data(
+        #             filepath=dp.load_service_data()[dp.a_data_key]
+        #         )
+        #     )
+        # )
         
         return config_file_menu
     
@@ -179,8 +179,9 @@ class MenuPerformer():
         if dir:
             dp = DataPerformer()
             service_data = dp.load_service_data()
-            service_data[dp.a_data_key] = dir
-            dp.save_service_data(service_data)
+            if service_data:
+                service_data[dp.a_data_key] = dir
+                dp.save_service_data(service_data)
         
     def _save_visual_data(self, root: tk.Toplevel, data: str):
         dp = DataPerformer()

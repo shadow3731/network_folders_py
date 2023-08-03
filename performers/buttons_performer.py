@@ -96,7 +96,12 @@ class ButtonsPerformer():
         button_name = 'Button' if not b_data.get('name') else b_data['name']
         button.config(text='Подождите')
         
-        directory = f"{'' if not b_data.get('path') else b_data['path']}{extra_dir}"
+        directory = ''
+        if b_data.get('is_not_regular'):
+            if b_data['is_not_regular'] == 'False':
+                directory = f"{'' if not b_data.get('path') else b_data['path']}{extra_dir}"
+            else:
+                directory = f"{'' if not b_data.get('path') else b_data['path']}"
         
         threading.Thread(
             target=self._open_directory,

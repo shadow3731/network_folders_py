@@ -14,6 +14,7 @@ class WindowPerformer():
         
         window_width = 500
         window_height = 0
+        widgets_height = 0
         
         if isinstance(data, dict):
             if data.get('app_name'):
@@ -37,6 +38,7 @@ class WindowPerformer():
             if groups_pos and len(groups_pos) > 0:
                 window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
                 widgets_height = window_height
+                
                 if window_height > 570:
                     window_height = 570
             else:

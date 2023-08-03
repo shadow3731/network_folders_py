@@ -33,6 +33,12 @@ class Application():
             height=canvas.winfo_screenheight()
         )
         
+        root_elements: dict = {
+            'root': self.root,
+            'canvas': canvas,
+            'frame': frame
+        }
+        
         if a_data:
             self._set_cursor_values(a_data)
             buttons_pos = self.bp.configure_buttons(a_data)
@@ -51,12 +57,6 @@ class Application():
                     positions=buttons_pos,
                     root=frame
                 )
-                
-                root_elements: dict = {
-                    'root': self.root,
-                    'canvas': canvas,
-                    'frame': frame
-                }
             
                 self.wp.show_window(
                     roots=root_elements, 
@@ -65,10 +65,10 @@ class Application():
                 )
                 
             else:
-                self.wp.show_window(root=self.root, data=a_data)
+                self.wp.show_window(roots=root_elements, data=a_data)
             
         else:
-            self.wp.show_window(root=self.root)
+            self.wp.show_window(roots=root_elements)
         
         frame.update_idletasks()
         
