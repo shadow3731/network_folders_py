@@ -44,7 +44,7 @@ class ButtonsPerformer():
                 
         return None
             
-    def show_buttons(self, data: dict, positions: list, root: tk.Tk):
+    def show_buttons(self, data: dict, positions: list, root: tk.Frame):
         for i in range(len(positions)):
             group_data: dict = data['groups'][f'group{i+1}']
             

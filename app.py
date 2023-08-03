@@ -20,6 +20,19 @@ class Application():
     def start(self, s_data: dict, a_data: dict):
         self.mp.show_menu(self.root)
         
+        canvas = tk.Canvas(master=self.root)
+        canvas.place(x=0, y=0, relwidth=1, relheight=1)
+        canvas.bind_all(
+            '<MouseWheel>', 
+            lambda e, canvas=canvas: self._on_mousewheel(e, canvas)
+        )
+        
+        frame = tk.Frame(
+            master=canvas, 
+            width=canvas.winfo_screenwidth(),
+            height=canvas.winfo_screenheight()
+        )
+        
         if a_data:
             self._set_cursor_values(a_data)
             buttons_pos = self.bp.configure_buttons(a_data)
@@ -31,12 +44,12 @@ class Application():
                 self.gp.show_groups(
                     data=a_data, 
                     positions=groups_pos,
-                    root=self.root
+                    root=frame
                 )
                 self.bp.show_buttons(
                     data=a_data, 
                     positions=buttons_pos,
-                    root=self.root
+                    root=frame
                 )
             
                 self.wp.show_window(
@@ -50,6 +63,16 @@ class Application():
             
         else:
             self.wp.show_window(root=self.root)
+        
+        frame.update_idletasks()
+        
+        canvas.config(scrollregion=canvas.bbox('all'))
+        canvas.create_window((0, 0), window=frame, anchor=tk.NW)
+        
+        scrollbar = tk.Scrollbar(master=self.root, command=canvas.yview)
+        scrollbar.place(relx=1, rely=0, anchor=tk.NE)
+        
+        canvas.config(yscrollcommand=scrollbar.set)
         
         self.root.mainloop()
         
@@ -80,3 +103,6 @@ class Application():
             except ValueError as e:
                 message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
                 Dialog().show_error(message)
+                
+    def _on_mousewheel(self, event, canvas: tk.Canvas):
+        canvas.yview_scroll(-1*(event.delta // 120), 'units')

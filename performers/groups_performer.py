@@ -17,7 +17,7 @@ class GroupsPerformer():
             
         return positions
     
-    def show_groups(self, data: dict, positions: list, root: tk.Tk):
+    def show_groups(self, data: dict, positions: list, root: tk.Frame):
         if data:
             for i in range(len(positions)):
                 group_data: dict = data['groups'][f'group{i+1}']
