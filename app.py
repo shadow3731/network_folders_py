@@ -51,9 +51,15 @@ class Application():
                     positions=buttons_pos,
                     root=frame
                 )
+                
+                root_elements: dict = {
+                    'root': self.root,
+                    'canvas': canvas,
+                    'frame': frame
+                }
             
                 self.wp.show_window(
-                    root=self.root, 
+                    roots=root_elements, 
                     data=a_data, 
                     groups_pos=groups_pos
                 )
@@ -66,11 +72,15 @@ class Application():
         
         frame.update_idletasks()
         
-        canvas.config(scrollregion=canvas.bbox('all'))
+        canvas.config(scrollregion=(0, 0, frame.winfo_reqwidth(), frame.winfo_reqheight()))
         canvas.create_window((0, 0), window=frame, anchor=tk.NW)
         
-        scrollbar = tk.Scrollbar(master=self.root, command=canvas.yview)
-        scrollbar.place(relx=1, rely=0, anchor=tk.NE)
+        scrollbar = tk.Scrollbar(
+            master=self.root, 
+            width=self.cursor.right_padding+2,
+            command=canvas.yview
+        )
+        scrollbar.place(relx=1, rely=0, relheight=1, anchor=tk.NE)
         
         canvas.config(yscrollcommand=scrollbar.set)
         
@@ -82,6 +92,7 @@ class Application():
         self.cursor.width = 90
         self.cursor.height = 40
         self.cursor.padding = 5
+        self.cursor.right_padding = 15
         self.cursor.screen_width = 680
         
         if isinstance(data, dict) and data.get('window') and isinstance(data['window'], dict):
@@ -90,6 +101,9 @@ class Application():
                     self.cursor.x = int(data['window']['padding'])
                     self.cursor.y = int(data['window']['padding'])
                     self.cursor.padding = int(data['window']['padding'])
+                    
+                if data['window'].get('r_padding'):
+                    self.cursor.width = int(data['window']['r_padding'])
                     
                 if data['window'].get('button_width'):
                     self.cursor.width = int(data['window']['button_width'])

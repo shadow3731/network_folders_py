@@ -7,17 +7,17 @@ class WindowPerformer():
     def __init__(self):
         pass
     
-    def show_window(self, root: tk.Tk, data: dict = None, groups_pos: list = None):
-        root.title('Network Folders')
-        root.iconbitmap(default='icon.ico')
-        root.resizable(width=False, height=False)
+    def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
+        roots['root'].title('Network Folders')
+        roots['root'].iconbitmap(default='icon.ico')
+        roots['root'].resizable(width=False, height=False)
         
         window_width = 500
         window_height = 0
         
         if isinstance(data, dict):
             if data.get('app_name'):
-                root.title(data['app_name'])
+                roots['root'].title(data['app_name'])
             
             try:
                 if data.get('window') and isinstance(data['window'], dict):
@@ -36,13 +36,16 @@ class WindowPerformer():
         
             if groups_pos and len(groups_pos) > 0:
                 window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
+                widgets_height = window_height
                 if window_height > 570:
                     window_height = 570
             else:
                 window_height = 0
+                
+        self._congigure_roots(roots, widgets_height)
             
         self.center_window(
-            root=root,
+            root=roots['root'],
             width=window_width,
             height=window_height
         )
@@ -61,3 +64,7 @@ class WindowPerformer():
         window.iconbitmap('')
         window.attributes('-toolwindow', 1)
         window.transient(root)
+        
+    def _congigure_roots(self, roots: dict, height: int):
+        roots['frame'].config(height=height)
+        roots['canvas'].config(height=height)
