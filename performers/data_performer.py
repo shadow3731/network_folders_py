@@ -9,7 +9,7 @@ class DataPerformer():
         
         self.service_file_name = 'local_data.picke'
         self.appearance_file_name = 'local_visual.json'
-        self.password_filename = 'password.picke'
+        # self.password_filename = 'password.picke'
         
         self.a_data_key: str = 'appearance_file_path'
                 
@@ -40,10 +40,10 @@ class DataPerformer():
                         data = json.load(f)
                         self.save_appearance_data(data, local_filepath)
                         
-                        self._create_if_not_exists(
-                            target='password',
-                            filepath=filepath
-                        )
+                        # self._create_if_not_exists(
+                        #     target='password',
+                        #     filepath=filepath
+                        # )
                         
                         return data
                     
@@ -89,15 +89,15 @@ class DataPerformer():
                 with open(filepath, 'wb') as f:
                     pickle.dump(data, f)
                     
-        elif target == 'password':
-            match: re.Match[str] = re.search(r'[\\/]([^\\/]+)$', filepath)
-            if match:
-                psw_filepath = f'{filepath[:match.start()]}\\{self.password_filename}'
-                if not os.path.exists(psw_filepath):
-                    data = {'password': '1111'}
+        # elif target == 'password':
+        #     match: re.Match[str] = re.search(r'[\\/]([^\\/]+)$', filepath)
+        #     if match:
+        #         psw_filepath = f'{filepath[:match.start()]}\\{self.password_filename}'
+        #         if not os.path.exists(psw_filepath):
+        #             data = {'password': '1111'}
                     
-                    with open(psw_filepath, 'wb') as f:
-                        pickle.dump(data, f)
+        #             with open(psw_filepath, 'wb') as f:
+        #                 pickle.dump(data, f)
     
     def _get_documents_folder(self) -> str:
         if os.name == 'nt':
