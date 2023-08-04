@@ -1,4 +1,4 @@
-import os, json, pickle, re
+import os, json, pickle, re, subprocess
 
 from dialog import Dialog
 
@@ -12,6 +12,8 @@ class DataPerformer():
         # self.password_filename = 'password.picke'
         
         self.a_data_key: str = 'appearance_file_path'
+        
+        self.server_comp_name = None
                 
     def load_service_data(self) -> dict:
         if self.documents_folder:
@@ -20,7 +22,13 @@ class DataPerformer():
             self._create_if_not_exists('service_data', filepath)
             
             with open(filepath, 'rb') as f:
-                return pickle.load(f)
+                data: dict = pickle.load(f)
+                
+                self.server_comp_name = self._get_computer_ip_or_name(
+                    filepath=data[self.a_data_key]
+                )
+                
+                return data
             
         return None
         
@@ -35,17 +43,22 @@ class DataPerformer():
             local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
             
             try:
-                if os.path.exists(filepath):
-                    with open(filepath, encoding='utf8') as f:
-                        data = json.load(f)
-                        self.save_appearance_data(data, local_filepath)
-                        
-                        # self._create_if_not_exists(
-                        #     target='password',
-                        #     filepath=filepath
-                        # )
-                        
-                        return data
+                if self.server_comp_name and self._is_server_online(self.server_comp_name):
+                    if os.path.exists(filepath):
+                        with open(filepath, encoding='utf8') as f:
+                            data = json.load(f)
+                            self.save_appearance_data(data, local_filepath)
+                            
+                            # self._create_if_not_exists(
+                            #     target='password',
+                            #     filepath=filepath
+                            # )
+                            
+                            return data
+                    
+                    elif os.path.exists(local_filepath):
+                        with open(local_filepath, encoding='utf8') as f:
+                            return json.load(f)
                     
                 elif os.path.exists(local_filepath):
                     with open(local_filepath, encoding='utf8') as f:
@@ -117,9 +130,29 @@ class DataPerformer():
             pass
         
         except Exception as e:
-            message = 'Во время выполнения операции произошла ошибка.\n\n{e}'
+            message = 'Во время выполнения операции создания локальной папки для этой программы произошла ошибка.\n\n{e}'
             Dialog().show_error(message)
             return None
         
         finally:
             return folder_dir
+        
+    def _get_computer_ip_or_name(self, filepath: str) -> str:
+        components = filepath.split('\\')
+        
+        if len(components) >= 3 and components[0] == '' and components[1] == '':
+            return components[2]
+        
+        return None
+        
+    def _is_server_online(self, host: str) -> bool:
+        result = subprocess.run(
+            ['ping', '-c', '1', '-W', '1', host], 
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        
+        if result.returncode == 0:
+            return True
+        else:
+            return False
