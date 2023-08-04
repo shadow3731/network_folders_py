@@ -1,4 +1,4 @@
-import os, json, pickle, re, subprocess
+import os, json, pickle, re, subprocess, socket
 
 from dialog import Dialog
 
@@ -138,10 +138,11 @@ class DataPerformer():
             return folder_dir
         
     def _get_computer_ip_or_name(self, filepath: str) -> str:
-        components = filepath.split('\\')
+        match = re.match(r'//([^/]+)', filepath)
         
-        if len(components) >= 3 and components[0] == '' and components[1] == '':
-            return components[2]
+        if match:
+            print(match.group(1))
+            return match.group(1)
         
         return None
         
@@ -154,5 +155,11 @@ class DataPerformer():
         
         if result.returncode == 0:
             return True
+        
         else:
-            return False
+            try:
+                ip = socket.gethostbyname(host)
+                return True
+            
+            except socket.gaierror as e:
+                return False
