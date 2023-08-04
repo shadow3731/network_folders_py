@@ -1,3 +1,5 @@
+import sys, os
+
 import tkinter as tk
 
 from dialog import Dialog
@@ -9,7 +11,7 @@ class WindowPerformer():
     
     def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
         roots['root'].title('Network Folders')
-        roots['root'].iconbitmap(default='icon.ico')
+        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
@@ -70,3 +72,11 @@ class WindowPerformer():
     def _congigure_roots(self, roots: dict, height: int):
         roots['frame'].config(height=height)
         roots['canvas'].config(height=height)
+        
+    def _get_icon_path(self, rel_path) -> str:
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath('.')
+            
+        return os.path.join(base_path, rel_path)
