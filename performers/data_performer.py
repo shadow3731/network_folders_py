@@ -37,39 +37,38 @@ class DataPerformer():
             filepath = f'{self.documents_folder}/{self.service_file_name}'
             with open(filepath, 'wb') as f:
                 pickle.dump(savable_data, f)
+                
+    def load_appearance_data_from_server(self, filepath: str) -> dict:
+        if self.server_comp_name and self._is_server_online(self.server_comp_name):
+            if os.path.exists(filepath):
+                try:
+                    with open(filepath, encoding='utf8') as f:
+                        data = json.load(f)
+                        
+                        local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
+                        self.save_appearance_data(data, local_filepath)
+                        
+                        return data
+                    
+                except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                    message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
+                    Dialog().show_error(message)
+                    
+                    return self.load_appearance_data_locally(self)
         
-    def load_appearance_data(self, filepath: str) -> dict:
+    def load_appearance_data_locally(self) -> dict:
         if self.documents_folder:
             local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
-            
-            try:
-                if self.server_comp_name and self._is_server_online(self.server_comp_name):
-                    if os.path.exists(filepath):
-                        with open(filepath, encoding='utf8') as f:
-                            data = json.load(f)
-                            self.save_appearance_data(data, local_filepath)
-                            
-                            # self._create_if_not_exists(
-                            #     target='password',
-                            #     filepath=filepath
-                            # )
-                            
-                            return data
-                    
-                    elif os.path.exists(local_filepath):
-                        with open(local_filepath, encoding='utf8') as f:
-                            return json.load(f)
-                    
-                elif os.path.exists(local_filepath):
+            if os.path.exists(local_filepath):
+                try:
                     with open(local_filepath, encoding='utf8') as f:
                         return json.load(f)
                     
-            except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                message = f'Не удалось сохранить файл конфигурации. Проверьте синтаксис файла. Возможно присутствует лишний или отсутсвует необходимый знак.\n\n{e}'
-                Dialog().show_error(message)
-                return None
+                except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                    message = f'Не удалось выгрузить данные из файла визуализации, находящегося на этом устройстве.\n\n{e}'
+                    Dialog().show_error(message)
         
-        return None
+                    return None
     
     def save_appearance_data(self, savabale_data: dict, filepath: str):
         with open(filepath, 'w', encoding='utf8') as f:
@@ -126,7 +125,7 @@ class DataPerformer():
         try:
             os.mkdir(folder_dir)
             
-        except FileExistsError as e:
+        except FileExistsError:
             pass
         
         except Exception as e:
@@ -161,5 +160,5 @@ class DataPerformer():
                 ip = socket.gethostbyname(host)
                 return True
             
-            except socket.gaierror as e:
+            except socket.gaierror:
                 return False

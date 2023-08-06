@@ -17,7 +17,7 @@ class Application():
         self.gp = GroupsPerformer(self.cursor)
         self.bp = ButtonsPerformer(self.cursor)
         
-    def start(self, s_data: dict, a_data: dict):
+    def start(self, a_data: dict):
         self.mp.show_menu(self.root)
         
         canvas = tk.Canvas(master=self.root)
@@ -33,7 +33,7 @@ class Application():
             height=canvas.winfo_screenheight()
         )
         
-        root_elements: dict = {
+        root_elements = {
             'root': self.root,
             'canvas': canvas,
             'frame': frame

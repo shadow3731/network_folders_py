@@ -1,7 +1,7 @@
 from tkinter import messagebox as mb
 from tkinter import filedialog as fd
 
-import json
+# import json
 
 class Dialog():
     
@@ -14,24 +14,24 @@ class Dialog():
             message=message
         )
         
-    def save_file_dialog(self) -> str:
-        file = fd.asksaveasfile(
-            title='Создать файл визуализации',
-            defaultextension='.json',
-            filetypes=[('JSON файлы', '*.json'), ('Все файлы', '*.*')]
-        )
-        if file:
-            if file.name.endswith('.json'):
-                with open(file.name, 'w', encoding='utf8'):
-                    json.dump('{}', file)
-                    return file.name
+    # def save_file_dialog(self) -> str:
+    #     file = fd.asksaveasfile(
+    #         title='Создать файл визуализации',
+    #         defaultextension='.json',
+    #         filetypes=[('JSON файлы', '*.json'), ('Все файлы', '*.*')]
+    #     )
+    #     if file:
+    #         if file.name.endswith('.json'):
+    #             with open(file.name, 'w', encoding='utf8'):
+    #                 json.dump('{}', file)
+    #                 return file.name
                 
-            else:
-                message = "Файл визуализации должен иметь расширение .json."
-                self.show_error(message)
-                return None
+    #         else:
+    #             message = "Файл визуализации должен иметь расширение .json."
+    #             self.show_error(message)
+    #             return None
                 
-        return None
+    #     return None
     
     def open_file_dialog(self) -> str:
         file = fd.askopenfile(
@@ -46,6 +46,7 @@ class Dialog():
             else:
                 message = "Файл визуализации должен иметь расширение .json."
                 self.show_error(message)
+                
                 return None
                 
         return None
