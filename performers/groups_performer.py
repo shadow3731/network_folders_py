@@ -24,7 +24,7 @@ class GroupsPerformer():
                 
                 tk.LabelFrame(
                     master=root,
-                    text=f'Group {i+1}' if not group_data.get('name') else group_data['name'],
+                    text=group_data['name'],
                     font=Font(family='Calibri', size=11, weight='bold')
                 ).place(
                     x=positions[i][0],

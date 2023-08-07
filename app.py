@@ -39,33 +39,33 @@ class Application():
             'frame': frame
         }
         
-        if a_data:
-            self._set_cursor_values(a_data)
-            buttons_pos = self.bp.configure_buttons(a_data)
+        if a_data and len(a_data) > 0:
+            if self._set_cursor_values(a_data):
+                buttons_pos = self.bp.configure_buttons(a_data)
             
-            if buttons_pos and len(buttons_pos) > 0:
-                self._set_cursor_values(a_data)
-                groups_pos = self.gp.configure_groups(buttons_pos)
-            
-                self.gp.show_groups(
-                    data=a_data, 
-                    positions=groups_pos,
-                    root=frame
-                )
-                self.bp.show_buttons(
-                    data=a_data, 
-                    positions=buttons_pos,
-                    root=frame
-                )
-            
-                self.wp.show_window(
-                    roots=root_elements, 
-                    data=a_data, 
-                    groups_pos=groups_pos
-                )
-                
-            else:
-                self.wp.show_window(roots=root_elements, data=a_data)
+                if buttons_pos and len(buttons_pos) > 0:
+                    if self._set_cursor_values(a_data):
+                        groups_pos = self.gp.configure_groups(buttons_pos)
+                    
+                        self.gp.show_groups(
+                            data=a_data, 
+                            positions=groups_pos,
+                            root=frame
+                        )
+                        self.bp.show_buttons(
+                            data=a_data, 
+                            positions=buttons_pos,
+                            root=frame
+                        )
+                    
+                        self.wp.show_window(
+                            roots=root_elements, 
+                            data=a_data, 
+                            groups_pos=groups_pos
+                        )
+                    
+                else:
+                    self.wp.show_window(roots=root_elements, data=a_data)
             
         else:
             self.wp.show_window(roots=root_elements)
@@ -86,37 +86,23 @@ class Application():
         
         self.root.mainloop()
         
-    def _set_cursor_values(self, data: dict):
-        self.cursor.x = 5
-        self.cursor.y = 5
-        self.cursor.width = 90
-        self.cursor.height = 40
-        self.cursor.padding = 5
-        self.cursor.right_padding = 15
-        self.cursor.screen_width = 680
-        
-        if isinstance(data, dict) and data.get('window') and isinstance(data['window'], dict):
-            try:
-                if data['window'].get('padding'):
-                    self.cursor.x = int(data['window']['padding'])
-                    self.cursor.y = int(data['window']['padding'])
-                    self.cursor.padding = int(data['window']['padding'])
-                    
-                if data['window'].get('r_padding'):
-                    self.cursor.width = int(data['window']['r_padding'])
-                    
-                if data['window'].get('button_width'):
-                    self.cursor.width = int(data['window']['button_width'])
-                    
-                if data['window'].get('button_height'):
-                    self.cursor.height = int(data['window']['button_height'])
-                    
-                if data['window'].get('width'):
-                    self.cursor.screen_width = int(data['window']['width'])
+    def _set_cursor_values(self, data: dict) -> bool:
+        try:
+            self.cursor.x = data['window']['padding']
+            self.cursor.y = data['window']['padding']
+            self.cursor.width = data['window']['button_width']
+            self.cursor.height = data['window']['button_height']
+            self.cursor.padding = data['window']['padding']
+            self.cursor.right_padding = data['window']['r_padding']
+            self.cursor.screen_width = data['window']['width']
             
-            except ValueError as e:
-                message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
-                Dialog().show_error(message)
+            return True
+        
+        except ValueError as e:
+            message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
+            Dialog().show_error(message)
+            
+            return False
                 
     def _on_mousewheel(self, event, canvas: tk.Canvas):
         canvas.yview_scroll(-1*(event.delta // 120), 'units')

@@ -140,7 +140,6 @@ class DataPerformer():
         match = re.match(r'//([^/]+)', filepath)
         
         if match:
-            print(match.group(1))
             return match.group(1)
         
         return None

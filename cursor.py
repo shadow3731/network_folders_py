@@ -19,18 +19,18 @@ class Cursor():
         self.screen_width = max_width
     
     def place_button(self, button: dict) -> tuple:
-        if self.x + int(button['size'])*self.width > self.screen_width - self.padding - self.right_padding:
+        if self.x + button['size']*self.width > self.screen_width - self.padding - self.right_padding:
             self.x = self.padding
             self.y += self.height - self.padding
             
         button_positions: tuple = (
             self.x + self.padding,
             self.y + 4*self.padding,
-            int(button['size'])*self.width + (int(button['size'])-1)*self.padding,
+            button['size']*self.width + (button['size']-1)*self.padding,
             self.height - 2*self.padding
         )
         
-        self.x += int(button['size'])*self.width + int(button['size'])*self.padding
+        self.x += button['size']*self.width + button['size']*self.padding
             
         return button_positions
     

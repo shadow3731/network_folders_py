@@ -10,39 +10,32 @@ class WindowPerformer():
         pass
     
     def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
-        roots['root'].title('Network Folders')
-        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
+        roots['root'].title(data['app_name'])
+        # roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
         window_height = 0
         widgets_height = 0
         
-        if isinstance(data, dict):
-            if data.get('app_name'):
-                roots['root'].title(data['app_name'])
-            
-            try:
-                if data.get('window') and isinstance(data['window'], dict):
-                    if data['window'].get('width'):
-                        window_width = int(data['window']['width'])
+        try:
+            window_width = data['window']['width']
+            window_padding = data['window']['padding']
                         
-                    if data['window'].get('padding'):
-                        window_padding = int(data['window']['padding'])
-                        
-            except ValueError as e:
-                message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
-                Dialog().show_error(message)
+        except ValueError as e:
+            message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
+            Dialog().show_error(message)
                 
-                window_width = 680
-                window_padding = 5
+            window_width = 680
+            window_padding = 5
         
-            if groups_pos and len(groups_pos) > 0:
-                window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
-                widgets_height = window_height
+        if groups_pos and len(groups_pos) > 0:
+            window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
+            widgets_height = window_height
                 
-                if window_height > 570:
-                    window_height = 570
+            if window_height > 570:
+                window_height = 570
+                
             else:
                 window_height = 0
                 

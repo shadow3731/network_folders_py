@@ -14,35 +14,32 @@ class ButtonsPerformer():
     def configure_buttons(self, data: dict) -> list:
         positions: list = []
         
-        if isinstance(data, dict) and data.get('groups') and isinstance(data['groups'], dict):
-            groups_data: dict = data['groups']
-            group_index = 0
+        groups_data: dict = data['groups']
+        group_index = 0
             
-            while True:
-                group_index += 1
+        while True:
+            group_index += 1
                 
-                if groups_data.get(f'group{group_index}') and groups_data[f'group{group_index}'].get('buttons'):
-                    buttons_data: dict = groups_data[f'group{group_index}']['buttons']
-                    button_index = 0
-                    positions.append([])
+            if groups_data.get(f'group{group_index}') and groups_data[f'group{group_index}'].get('buttons'):
+                buttons_data: dict = groups_data[f'group{group_index}']['buttons']
+                button_index = 0
+                positions.append([])
                     
-                    while True:
-                        button_index += 1
+                while True:
+                    button_index += 1
                         
-                        if buttons_data.get(f'button{button_index}'):               
-                            positions[group_index-1].append(
-                                self.cursor.place_button(
-                                    buttons_data[f'button{button_index}']
-                                )
+                    if buttons_data.get(f'button{button_index}'):               
+                        positions[group_index-1].append(
+                            self.cursor.place_button(
+                                buttons_data[f'button{button_index}']
                             )
+                        )
                         
-                        else:
-                            self.cursor.move_to_new_group()  
-                            break
-                else:
-                    return positions
-                
-        return None
+                    else:
+                        self.cursor.move_to_new_group()  
+                        break
+            else:
+                return positions
             
     def show_buttons(self, data: dict, positions: list, root: tk.Frame):
         for i in range(len(positions)):
@@ -53,30 +50,28 @@ class ButtonsPerformer():
                 
                 button = tk.Button(
                     master=root,
-                    text=f"Button {j}" if not button_data.get('name') else button_data['name'],
+                    text=button_data['name'],
                     font=Font(family='Calibri', size=11, weight='bold'),
                     relief=tk.SOLID,
                     borderwidth=1,
-                    bg='white' if not button_data.get('bg_color') else button_data['bg_color'],
-                    fg='black' if not button_data.get('fg_color') else button_data['fg_color']
+                    bg=button_data['bg_color'],
+                    fg=button_data['fg_color']
                 )
                 
                 button.bind(
                     '<Button-1>', 
                     lambda e, 
                         button=button,
-                        data=button_data, 
-                        extra_dir='' if not data.get('additional_path') else data['additional_path']: 
-                            self._start_action(e, button, data, extra_dir)
+                        data=button_data: 
+                            self._start_action(e, button, data)
                 )
                 
                 button.bind(
                     '<Return>', 
                     lambda e, 
                         button=button,
-                        data=button_data, 
-                        extra_dir='' if not data.get('additional_path') else data['additional_path']: 
-                            self._start_action(e, button, data, extra_dir)
+                        data=button_data: 
+                            self._start_action(e, button, data)
                 )
                     
                 button.place(
@@ -90,29 +85,22 @@ class ButtonsPerformer():
         self, 
         event, 
         button: tk.Button, 
-        b_data: dict, 
-        extra_dir: str
+        b_data: dict
     ):
-        button_name = 'Button' if not b_data.get('name') else b_data['name']
+        button_name = b_data['name']
+        button_dir = b_data['path']
         button.config(text='Подождите')
-        
-        directory = ''
-        if b_data.get('is_not_regular'):
-            if b_data['is_not_regular'] == 'False':
-                directory = f"{'' if not b_data.get('path') else b_data['path']}{extra_dir}"
-            else:
-                directory = f"{'' if not b_data.get('path') else b_data['path']}"
         
         threading.Thread(
             target=self._open_directory,
-            args=(directory, button, button_name)
+            args=(button_dir, button, button_name)
         ).start()
 
         button.config(
             relief=tk.SOLID,
             borderwidth=1,
-            bg='white' if not b_data.get('bg_color') else b_data['bg_color'],
-            fg='black' if not b_data.get('fg_color') else b_data['fg_color']
+            bg=b_data['bg_color'],
+            fg=b_data['fg_color']
         )
     
     def _open_directory(self, dir: str, btn: tk.Button, name: str):
