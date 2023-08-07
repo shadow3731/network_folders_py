@@ -15,7 +15,7 @@ class DataPerformer():
         
         self.server_comp_name = None
                 
-    def load_service_data(self) -> dict:
+    def load_service_data(self) -> dict:  
         if self.documents_folder:
             filepath = f'{self.documents_folder}\\{self.service_file_name}'
             

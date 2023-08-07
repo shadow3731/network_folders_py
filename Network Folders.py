@@ -1,10 +1,8 @@
-import copy
-
 from performers.data_performer import DataPerformer
 from app import Application
 from converter import Converter
 
-def start():
+def start(): 
     dp = DataPerformer()
     service_data = dp.load_service_data()
     if service_data:
@@ -13,7 +11,7 @@ def start():
         )
         
         appearance_data = Converter().return_valid_dictionary(
-            copy.deepcopy(raw_appearance_data)
+            raw_appearance_data
         )
         
         Application().start(appearance_data)
