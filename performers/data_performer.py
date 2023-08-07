@@ -54,7 +54,9 @@ class DataPerformer():
                     message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
                     Dialog().show_error(message)
                     
-                    return self.load_appearance_data_locally(self)
+                    return self.load_appearance_data_locally()
+        
+        return self.load_appearance_data_locally()
         
     def load_appearance_data_locally(self) -> dict:
         if self.documents_folder:
@@ -68,7 +70,7 @@ class DataPerformer():
                     message = f'Не удалось выгрузить данные из файла визуализации, находящегося на этом устройстве.\n\n{e}'
                     Dialog().show_error(message)
         
-                    return None
+        return None
     
     def save_appearance_data(self, savabale_data: dict, filepath: str):
         with open(filepath, 'w', encoding='utf8') as f:
@@ -119,9 +121,10 @@ class DataPerformer():
         else:
             message = 'Невозможно запустить программу на этой операционной системе.'
             Dialog().show_error(message)
+            
             return None
         
-        folder_dir = f'{doc_dir}/Network Folders'
+        folder_dir = f'{doc_dir}\\Network Folders'
         try:
             os.mkdir(folder_dir)
             
@@ -131,10 +134,10 @@ class DataPerformer():
         except Exception as e:
             message = 'Во время выполнения операции создания локальной папки для этой программы произошла ошибка.\n\n{e}'
             Dialog().show_error(message)
+            
             return None
         
-        finally:
-            return folder_dir
+        return folder_dir
         
     def _get_computer_ip_or_name(self, filepath: str) -> str:
         match = re.match(r'//([^/]+)', filepath)

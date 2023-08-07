@@ -14,32 +14,35 @@ class ButtonsPerformer():
     def configure_buttons(self, data: dict) -> list:
         positions: list = []
         
-        groups_data: dict = data['groups']
-        group_index = 0
-            
-        while True:
-            group_index += 1
+        if data.get('groups'):
+            groups_data: dict = data['groups']
+            group_index = 0
                 
-            if groups_data.get(f'group{group_index}') and groups_data[f'group{group_index}'].get('buttons'):
-                buttons_data: dict = groups_data[f'group{group_index}']['buttons']
-                button_index = 0
-                positions.append([])
+            while True:
+                group_index += 1
                     
-                while True:
-                    button_index += 1
+                if groups_data.get(f'group{group_index}') and groups_data[f'group{group_index}'].get('buttons'):
+                    buttons_data: dict = groups_data[f'group{group_index}']['buttons']
+                    button_index = 0
+                    positions.append([])
                         
-                    if buttons_data.get(f'button{button_index}'):               
-                        positions[group_index-1].append(
-                            self.cursor.place_button(
-                                buttons_data[f'button{button_index}']
+                    while True:
+                        button_index += 1
+                            
+                        if buttons_data.get(f'button{button_index}'):               
+                            positions[group_index-1].append(
+                                self.cursor.place_button(
+                                    buttons_data[f'button{button_index}']
+                                )
                             )
-                        )
-                        
-                    else:
-                        self.cursor.move_to_new_group()  
-                        break
-            else:
-                return positions
+                            
+                        else:
+                            self.cursor.move_to_new_group()  
+                            break
+                else:
+                    return positions
+                
+        return None
             
     def show_buttons(self, data: dict, positions: list, root: tk.Frame):
         for i in range(len(positions)):
