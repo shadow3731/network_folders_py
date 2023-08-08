@@ -42,7 +42,7 @@ class DataPerformer():
         if self.server_comp_name and self._is_server_online(self.server_comp_name):
             if os.path.exists(filepath):
                 try:
-                    with open(filepath, encoding='utf8') as f:
+                    with open(filepath, encoding='utf-8-sig') as f:
                         data = json.load(f)
                         
                         local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
@@ -63,7 +63,7 @@ class DataPerformer():
             local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
             if os.path.exists(local_filepath):
                 try:
-                    with open(local_filepath, encoding='utf8') as f:
+                    with open(local_filepath, encoding='utf-8-sig') as f:
                         return json.load(f)
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
@@ -73,7 +73,7 @@ class DataPerformer():
         return None
     
     def save_appearance_data(self, savabale_data: dict, filepath: str):
-        with open(filepath, 'w', encoding='utf8') as f:
+        with open(filepath, 'w', encoding='utf-8-sig') as f:
             json.dump(savabale_data, f, indent=4)
             
     # def load_password(self) -> str:
