@@ -1,3 +1,5 @@
+import os
+
 from tkinter import messagebox as mb
 from tkinter import filedialog as fd
 
@@ -36,6 +38,7 @@ class Dialog():
     def open_file_dialog(self) -> str:
         file = fd.askopenfile(
             title='Открыть файл визуализации',
+            initialdir=os.path.expanduser('~/Desktop'),
             defaultextension='.json',
             filetypes=[('JSON файлы', '*.json'), ('Все файлы', '*.*')]
         )
