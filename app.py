@@ -21,7 +21,7 @@ class Application():
         self.mp.show_menu(self.root)
         
         canvas = tk.Canvas(master=self.root)
-        canvas.place(x=0, y=-5, relwidth=1)
+        canvas.place(x=0, y=-5, relwidth=1, relheight=1)
         canvas.bind_all(
             '<MouseWheel>', 
             lambda e, canvas=canvas: self._on_mousewheel(e, canvas)
