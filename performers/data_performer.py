@@ -11,7 +11,9 @@ class DataPerformer():
         self.appearance_file_name = 'local_visual.json'
         # self.password_filename = 'password.picke'
         
-        self.a_data_key: str = 'appearance_file_path'
+        self.a_data_key = 'appearance_file_path'
+        self.username_cred_key = 'username_credentials'
+        self.password_cred_key = 'password_credentials'
         
         self.server_comp_name = None
                 
@@ -34,7 +36,7 @@ class DataPerformer():
         
     def save_service_data(self, savable_data: dict):
         if self.documents_folder:
-            filepath = f'{self.documents_folder}/{self.service_file_name}'
+            filepath = f'{self.documents_folder}\\{self.service_file_name}'
             with open(filepath, 'wb') as f:
                 pickle.dump(savable_data, f)
                 
@@ -98,7 +100,11 @@ class DataPerformer():
     def _create_if_not_exists(self, target: str, filepath: str=None):
         if target == 'service_data':
             if not os.path.exists(filepath):
-                data = {self.a_data_key: ''}
+                data = {
+                    self.a_data_key: '',
+                    self.username_cred_key: '',
+                    self.password_cred_key: ''
+                }
                 
                 with open(filepath, 'wb') as f:
                     pickle.dump(data, f)

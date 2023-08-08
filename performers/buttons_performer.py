@@ -5,11 +5,13 @@ import os, subprocess, platform, threading
 
 from cursor import Cursor
 from dialog import Dialog
+from performers.data_performer import DataPerformer
 
 class ButtonsPerformer():
     
-    def __init__(self, cursor: Cursor):
+    def __init__(self, cursor: Cursor, data_performer: DataPerformer):
         self.cursor = cursor
+        self.dp = data_performer
     
     def configure_buttons(self, data: dict) -> list:
         positions: list = []
@@ -45,6 +47,12 @@ class ButtonsPerformer():
         return None
             
     def show_buttons(self, data: dict, positions: list, root: tk.Frame):
+        s_data = self.dp.load_service_data()
+        credentials = {
+            'username': s_data[self.dp.username_cred_key],
+            'password': s_data[self.dp.password_cred_key]
+        }
+        
         for i in range(len(positions)):
             group_data: dict = data['groups'][f'group{i+1}']
             
@@ -66,7 +74,7 @@ class ButtonsPerformer():
                     lambda e, 
                         button=button,
                         data=button_data: 
-                            self._start_action(e, button, data)
+                            self._start_action(e, button, data, credentials)
                 )
                 
                 button.bind(
@@ -74,7 +82,7 @@ class ButtonsPerformer():
                     lambda e, 
                         button=button,
                         data=button_data: 
-                            self._start_action(e, button, data)
+                            self._start_action(e, button, data, credentials)
                 )
                     
                 button.place(
@@ -88,7 +96,8 @@ class ButtonsPerformer():
         self, 
         event, 
         button: tk.Button, 
-        b_data: dict
+        b_data: dict,
+        s_data: dict
     ):
         button_name = b_data['name']
         button_dir = b_data['path']
@@ -96,7 +105,7 @@ class ButtonsPerformer():
         
         threading.Thread(
             target=self._open_directory,
-            args=(button_dir, button, button_name)
+            args=(button_dir, button, button_name, s_data)
         ).start()
 
         button.config(
@@ -106,10 +115,17 @@ class ButtonsPerformer():
             fg=b_data['fg_color']
         )
     
-    def _open_directory(self, dir: str, btn: tk.Button, name: str):
+    def _open_directory(
+        self, 
+        dir: str, 
+        btn: tk.Button, 
+        name: str,
+        creds: dict
+    ):
         if platform.system() == 'Windows':
             try:
-                os.startfile(dir)
+                command = f"cmdkey /add:{dir} /user:{creds['username']} /pass:{creds['password']} && start {dir}"
+                subprocess.run(command, shell=True)
             except FileNotFoundError as e:
                 message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
                 Dialog().show_error(message)

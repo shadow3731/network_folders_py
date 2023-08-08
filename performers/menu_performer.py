@@ -7,8 +7,10 @@ from dialog import Dialog
 
 class MenuPerformer():
     
-    def __init__(self):
+    def __init__(self, data_performer: DataPerformer):
         self.menu = None
+        self.dp = data_performer
+        
     
     def show_menu(self, root: tk.Tk):
         self.menu = tk.Menu(master=root, tearoff=0)
@@ -23,7 +25,11 @@ class MenuPerformer():
         options_menu = tk.Menu(master=root, tearoff=0)
         options_menu.add_cascade(
             label='Файл конфигурации',
-            menu=self._show_config_file_menu(options_menu, root)
+            menu=self._show_config_file_menu(options_menu)
+        )
+        options_menu.add_cascade(
+            label='Сетевые учетные данные',
+            menu=self._show_cred_settings_menu(options_menu)
         )
         # options_menu.add_command(
         #     label='Изменить пароль',
@@ -34,8 +40,7 @@ class MenuPerformer():
     
     def _show_config_file_menu(
         self, 
-        master_menu: tk.Menu, 
-        root: tk.Tk
+        master_menu: tk.Menu
     ) -> tk.Menu:
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
         # config_file_menu.add_command(
@@ -58,6 +63,82 @@ class MenuPerformer():
         # )
         
         return config_file_menu
+    
+    def _show_cred_settings_menu(
+        self, 
+        master_menu: tk.Menu
+    ) -> tk.Menu:
+        config_file_menu = tk.Menu(master=master_menu, tearoff=0)
+        config_file_menu.add_command(
+            label='Изменить', 
+            command=lambda: self._set_network_credentials(master_menu)
+        )
+        
+        return config_file_menu
+    
+    def _set_network_credentials(self, root: tk.Menu):
+        modal_window = tk.Toplevel(root)
+        
+        WindowPerformer().center_window(modal_window, 400, 120)
+        WindowPerformer().configure_window(modal_window, root)
+        modal_window.title('Изменить сетевые учетные данные')
+        
+        s_data = self.dp.load_service_data()
+        
+        label_username = tk.Label(
+            master=modal_window,
+            text='Имя пользователя'
+        )
+        label_username.pack(anchor=tk.W, padx=5, pady=(5, 0))
+        
+        entry_username = tk.Entry(
+            master=modal_window,
+            width=modal_window.winfo_screenwidth()
+        )
+        entry_username.insert(0, s_data[self.dp.username_cred_key])
+        entry_username.pack(anchor=tk.CENTER, padx=5)
+        
+        label_password = tk.Label(
+            master=modal_window,
+            text='Пароль'
+        )
+        label_password.pack(anchor=tk.W, padx=5)
+        
+        entry_password = tk.Entry(
+            master=modal_window,
+            width=modal_window.winfo_screenwidth(),
+            show='*'
+        )
+        entry_password.insert(0, s_data[self.dp.password_cred_key])
+        entry_password.pack(anchor=tk.CENTER, padx=5, pady=(0, 5))
+        
+        button = tk.Button(
+            master=modal_window, 
+            text='Изменить',
+            width=12,
+            command=lambda: self._save_network_credentials(
+                window=modal_window,
+                user=entry_username.get(),
+                passw=entry_password.get()
+            )
+        )
+        button.pack(side=tk.RIGHT, padx=5)
+        
+        modal_window.wait_window()
+        
+    def _save_network_credentials(
+        self, 
+        window: tk.Toplevel, 
+        user: str, 
+        passw: str
+    ):
+        s_data = self.dp.load_service_data()
+        s_data[self.dp.username_cred_key] = user
+        s_data[self.dp.password_cred_key] = passw
+        
+        self.dp.save_service_data(s_data)
+        
+        window.destroy()
     
     # def _set_new_password(self, root: tk.Menu) -> bool: 
     #     modal_window = tk.Toplevel(root)
@@ -177,11 +258,10 @@ class MenuPerformer():
             
     def _save_file_directory(self, dir: str):
         if dir:
-            dp = DataPerformer()
-            service_data = dp.load_service_data()
-            if service_data:
-                service_data[dp.a_data_key] = dir
-                dp.save_service_data(service_data)
+            s_data = self.dp.load_service_data()
+            if s_data:
+                s_data[self.dp.a_data_key] = dir
+                self.dp.save_service_data(s_data)
         
     def _save_visual_data(self, root: tk.Toplevel, data: str):
         dp = DataPerformer()

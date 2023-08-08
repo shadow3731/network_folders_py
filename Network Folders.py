@@ -14,7 +14,7 @@ def start():
             raw_appearance_data
         )
         
-        Application().start(appearance_data)
+        Application(dp).start(appearance_data)
 
 if __name__ == '__main__':
     start()

@@ -11,7 +11,7 @@ class WindowPerformer():
     
     def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
         roots['root'].title(data['app_name'])
-        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
+        # roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
@@ -55,7 +55,7 @@ class WindowPerformer():
         window.resizable(width=False, height=False)
         window.iconbitmap('')
         window.attributes('-toolwindow', 1)
-        window.transient(root)
+        # window.transient(root)
         
     def _congigure_roots(self, roots: dict, height: int):
         roots['frame'].config(height=height)

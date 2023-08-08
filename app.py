@@ -6,16 +6,17 @@ from performers.window_performer import WindowPerformer
 from performers.menu_performer import MenuPerformer
 from performers.groups_performer import GroupsPerformer
 from performers.buttons_performer import ButtonsPerformer
+from performers.data_performer import DataPerformer
 
 class Application():
     
-    def __init__(self):
+    def __init__(self, data_performer: DataPerformer):
         self.root = tk.Tk()
         self.cursor = Cursor()
         self.wp = WindowPerformer()
-        self.mp = MenuPerformer()
+        self.mp = MenuPerformer(data_performer)
         self.gp = GroupsPerformer(self.cursor)
-        self.bp = ButtonsPerformer(self.cursor)
+        self.bp = ButtonsPerformer(self.cursor, data_performer)
         
     def start(self, a_data: dict):
         self.mp.show_menu(self.root)
