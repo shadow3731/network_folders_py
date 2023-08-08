@@ -11,7 +11,7 @@ class WindowPerformer():
     
     def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
         roots['root'].title(data['app_name'])
-        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
+        # roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
@@ -20,24 +20,19 @@ class WindowPerformer():
         
         try:
             window_width = data['window']['width']
-            window_padding = data['window']['padding']
                         
         except ValueError as e:
             message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
             Dialog().show_error(message)
                 
             window_width = 680
-            window_padding = 5
         
         if groups_pos and len(groups_pos) > 0:
-            window_height = groups_pos[-1][1] + groups_pos[-1][-1] + window_padding
+            window_height = groups_pos[-1][1] + groups_pos[-1][-1]
             widgets_height = window_height
                 
             if window_height > 570:
                 window_height = 570
-                
-            else:
-                window_height = 0
                 
         self._congigure_roots(roots, widgets_height)
             
