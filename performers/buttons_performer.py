@@ -123,33 +123,34 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
-            try:
-                map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
-                map_cmd_res = subprocess.run(map_cmd, shell=True, check=True)
-                
-                if map_cmd_res.returncode == 0:
-                    expl_cmd = f'explorer "{dir}"'
-                    subprocess.run(expl_cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                
-                    disconn_cmd = f'net use "{dir}" /delete'
-                    subprocess.run(disconn_cmd, shell=True, check=True)
+            map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
+            map_cmd_res = subprocess.run(
+                map_cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE
+            )
             
-            except subprocess.CalledProcessError as e:
-                if e.returncode == 1:
-                    disconn_cmd = f'net use "{dir}" /delete'
-                    subprocess.run(disconn_cmd, shell=True, check=True)
+            if map_cmd_res.returncode == 0:
+                expl_cmd = f'explorer "{dir}"'
+                expl_cmd_res = subprocess.run(
+                    expl_cmd, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE
+                )
                 
+                if expl_cmd_res.returncode == 0 or expl_cmd_res.returncode == 1:
+                    disconn_cmd = f'net use "{dir}" /delete'
+                    subprocess.run(
+                        disconn_cmd, 
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE
+                    )
+                    
                 else:
-                    msg_cmd = f'net helpmsg {e.returncode}'
-                    msg_cmd_res = subprocess.run(msg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        
-                    try:
-                        message = f'При подключении к директории {dir} произошла ошибка с кодом {e.returncode}.\n\n{msg_cmd_res.stdout.decode("utf-8").strip()}\n\n'
-                        Dialog().show_error(message)
-                                
-                    except UnicodeDecodeError:
-                        message = f'При подключении к директории {dir} произошла ошибка с кодом {e.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n'
-                        Dialog().show_error(message)
+                    self._show_error(expl_cmd_res)
+                
+            else:
+                self._show_error(map_cmd_res)
         
         else:
             try:
@@ -172,3 +173,10 @@ class ButtonsPerformer():
                 Dialog().show_error(message)
                 
         btn.config(text=name)
+        
+    def _show_error(self, command_result: subprocess.CompletedProcess[bytes]):
+        msg_cmd = f'net helpmsg {command_result.returncode}'
+        msg_cmd_res = subprocess.run(msg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        message = f'Возникла ошибка при выполнении операции.\n\nСетевая ошибка {command_result.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n{command_result.stderr.decode("ibm866").strip()}'
+        Dialog().show_error(message)
