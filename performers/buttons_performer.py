@@ -123,34 +123,41 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
-            map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
-            map_cmd_res = subprocess.run(
-                map_cmd, 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE
-            )
-            
-            if map_cmd_res.returncode == 0:
-                expl_cmd = f'explorer "{dir}"'
-                expl_cmd_res = subprocess.run(
-                    expl_cmd, 
+            if dir.endswith('.exe'):
+                subprocess.run(dir)
+            else:
+                map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
+                map_cmd_res = subprocess.run(
+                    map_cmd, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.PIPE
                 )
                 
-                if expl_cmd_res.returncode == 0 or expl_cmd_res.returncode == 1:
-                    disconn_cmd = f'net use "{dir}" /delete'
-                    subprocess.run(
-                        disconn_cmd, 
+                if map_cmd_res.returncode == 0:
+                    if dir.endswith('.exe'):
+                        dir_cmd = dir
+                    else:
+                        dir_cmd = f'explorer "{dir}"'
+                        
+                    dir_cmd_res = subprocess.run(
+                        dir_cmd, 
                         stdout=subprocess.PIPE, 
                         stderr=subprocess.PIPE
                     )
                     
+                    if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
+                        disconn_cmd = f'net use "{dir}" /delete'
+                        subprocess.run(
+                            disconn_cmd, 
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE
+                        )
+                        
+                    else:
+                        self._show_error(dir_cmd_res)
+                    
                 else:
-                    self._show_error(expl_cmd_res)
-                
-            else:
-                self._show_error(map_cmd_res)
+                    self._show_error(map_cmd_res)
         
         else:
             try:
