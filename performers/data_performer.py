@@ -1,4 +1,4 @@
-import os, json, pickle, re, subprocess, socket
+import os, json, pickle, re, subprocess, socket, threading
 
 from dialog import Dialog
 
@@ -54,7 +54,11 @@ class DataPerformer():
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
                     message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
-                    Dialog().show_error(message)
+                    dialog = Dialog()
+                    threading.Thread(
+                        target=dialog.show_error,
+                        args=(message,)
+                    ).start()
                     
                     return self.load_appearance_data_locally()
         
@@ -70,7 +74,11 @@ class DataPerformer():
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
                     message = f'Не удалось выгрузить данные из файла визуализации, находящегося на этом устройстве.\n\n{e}'
-                    Dialog().show_error(message)
+                    dialog = Dialog()
+                    threading.Thread(
+                        target=dialog.show_error,
+                        args=(message,)
+                    ).start()
         
         return None
     

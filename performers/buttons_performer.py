@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 
-import os, subprocess, platform, threading, shlex
+import re, subprocess, platform, threading
 
 from cursor import Cursor
 from dialog import Dialog
@@ -123,8 +123,16 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
-            if dir.endswith('.exe'):
-                subprocess.run(dir)
+            if self._is_file(dir):
+                file_cmd_res = subprocess.run(
+                    dir,
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE
+                )
+                
+                if file_cmd_res.returncode != 0:
+                    self._show_error(file_cmd_res)
+                
             else:
                 map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
                 map_cmd_res = subprocess.run(
@@ -134,11 +142,7 @@ class ButtonsPerformer():
                 )
                 
                 if map_cmd_res.returncode == 0:
-                    if dir.endswith('.exe'):
-                        dir_cmd = dir
-                    else:
-                        dir_cmd = f'explorer "{dir}"'
-                        
+                    dir_cmd = f'explorer "{dir}"'
                     dir_cmd_res = subprocess.run(
                         dir_cmd, 
                         stdout=subprocess.PIPE, 
@@ -189,3 +193,7 @@ class ButtonsPerformer():
         
         message = f'Возникла ошибка при выполнении операции.\n\nСетевая ошибка {command_result.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n{command_result.stderr.decode("ibm866").strip()}'
         Dialog().show_error(message)
+        
+    def _is_file(self, path: str) -> bool:
+        file_extension_pattern = r'\.(?:exe|txt|json|csv|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|bat|mp3|mp4|avi|wav|wmv|mkv)$'
+        return re.search(file_extension_pattern, path, re.IGNORECASE) is not None

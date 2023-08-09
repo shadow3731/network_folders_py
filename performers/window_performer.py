@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, threading
 
 import tkinter as tk
 
@@ -23,7 +23,11 @@ class WindowPerformer():
                         
         except ValueError as e:
             message = f'Неправильные значения размеров окна. Проверьте файл визуализации.\n\n{e}'
-            Dialog().show_error(message)
+            dialog = Dialog()
+            threading.Thread(
+                target=dialog.show_error,
+                args=(message,)
+            ).start()
                 
             window_width = 680
         
