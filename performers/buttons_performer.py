@@ -154,7 +154,9 @@ class ButtonsPerformer():
         
         else:
             try:
-                subprocess.run(f'echo "{creds["password"]}" | sudo -S open "{dir}"')
+                subprocess.run(
+                    f'echo "{creds["password"]}" | sudo -S open "{dir}"'
+                )
                 
             except subprocess.CalledProcessError as e:
                 message = f"Ошибка выполнения консольной команды.\n\n{e}"
