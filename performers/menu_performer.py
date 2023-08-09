@@ -82,6 +82,7 @@ class MenuPerformer():
         WindowPerformer().center_window(modal_window, 400, 120)
         WindowPerformer().configure_window(modal_window, root)
         modal_window.title('Изменить сетевые учетные данные')
+        modal_window.focus_set()
         
         s_data = self.dp.load_service_data()
         
@@ -117,17 +118,27 @@ class MenuPerformer():
             text='Изменить',
             width=12,
             command=lambda: self._save_network_credentials(
+                event=None,
                 window=modal_window,
                 user=entry_username.get(),
                 passw=entry_password.get()
             )
         )
         button.pack(side=tk.RIGHT, padx=5)
+        button.bind(
+                '<Return>', 
+                lambda e, 
+                window=modal_window, 
+                user=entry_username.get(),
+                passw=entry_password.get(): 
+                    self._save_network_credentials(e, window, user, passw)
+            )
         
         modal_window.wait_window()
         
     def _save_network_credentials(
         self, 
+        event, 
         window: tk.Toplevel, 
         user: str, 
         passw: str
