@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 
-import os, subprocess, platform, threading
+import os, subprocess, platform, threading, shlex
 
 from cursor import Cursor
 from dialog import Dialog
@@ -123,26 +123,43 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
+            map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
+            expl_cmd = f'explorer "{dir}"'
+            disconn_cmd = f'net use "{dir}" /delete'
+            
+            map_cmd_res, expl_cmd_res = None, None
+            
             try:
-                command = f"cmdkey /add:{dir} /user:{creds['username']} /pass:{creds['password']} && start {dir}"
-                subprocess.run(command, shell=True)
-            except FileNotFoundError as e:
-                message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
-                Dialog().show_error(message)
-            except PermissionError as e:
-                message = f"У этой учетной записи недостаточно прав для открытия этого файла или папки.\n\n{e}"
-                Dialog().show_error(message)
-            except TypeError as e:
-                message = f"Неправильный тип данных. Возможно путь к файлу или папке указан с ошибками.\n\n{e}"
-                Dialog().show_error(message)
-            except OSError as e:
-                message = f"Ошибка в системе.\n\n{e}"
-                Dialog().show_error(message)
+                map_cmd_res = subprocess.run(map_cmd, shell=True, check=True)
+                
+                if map_cmd_res.returncode == 0:
+                    expl_cmd_res = subprocess.run(expl_cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                    subprocess.run(disconn_cmd, shell=True, check=True)
+            
+            except subprocess.CalledProcessError as e:
+                if e.returncode == 1:
+                    disconn_cmd = f'net use "{dir}" /delete'
+                    subprocess.run(disconn_cmd, shell=True, check=True)
+                
+                else:
+                    msg_cmd = f'net helpmsg {e.returncode}'
+                    msg_cmd_res = subprocess.run(msg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        
+                    try:
+                        message = f'При подключении к директории {dir} произошла ошибка с кодом {e.returncode}.\n\n{msg_cmd_res.stdout.decode("utf-8").strip()}\n\n'
+                        Dialog().show_error(message)
+                                
+                    except UnicodeDecodeError:
+                        message = f'При подключении к директории {dir} произошла ошибка с кодом {e.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n'
+                        Dialog().show_error(message)
+        
         else:
             try:
-                subprocess.Popen(['xdg-open', dir])
+                subprocess.run(f'echo "{creds["password"]}" | sudo -S open "{dir}"')
+                
             except subprocess.CalledProcessError as e:
-                message = f"Ошибка выполнения консольной команды xdg-open.\n\n{e}"
+                message = f"Ошибка выполнения консольной команды.\n\n{e}"
                 Dialog().show_error(message)
             except FileNotFoundError as e:
                 message = f"Не удалось открыть файл или папку. Возможно имеются проблемы с сетью либо данной директории не существует.\n\n{e}"
