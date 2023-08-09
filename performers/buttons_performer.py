@@ -123,18 +123,15 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
-            map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
-            expl_cmd = f'explorer "{dir}"'
-            disconn_cmd = f'net use "{dir}" /delete'
-            
-            map_cmd_res, expl_cmd_res = None, None
-            
             try:
+                map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
                 map_cmd_res = subprocess.run(map_cmd, shell=True, check=True)
                 
                 if map_cmd_res.returncode == 0:
-                    expl_cmd_res = subprocess.run(expl_cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    expl_cmd = f'explorer "{dir}"'
+                    subprocess.run(expl_cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 
+                    disconn_cmd = f'net use "{dir}" /delete'
                     subprocess.run(disconn_cmd, shell=True, check=True)
             
             except subprocess.CalledProcessError as e:
