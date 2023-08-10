@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 
-import re, subprocess, platform, threading
+import re, subprocess, platform, threading, typing
 
 from cursor import Cursor
 from dialog import Dialog
@@ -122,21 +122,36 @@ class ButtonsPerformer():
         name: str,
         creds: dict
     ):
+        timeout = 10.0
+        
         if platform.system() == 'Windows':
             startup_info = subprocess.STARTUPINFO()
             startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startup_info.wShowWindow = subprocess.SW_HIDE
             
             if self._is_file(dir):
-                file_cmd_res = subprocess.run(
-                    dir,
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE,
-                    startupinfo=startup_info
-                )
+                try:
+                    file_cmd_res = subprocess.run(
+                        dir,
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE,
+                        startupinfo=startup_info,
+                        timeout=timeout
+                    )
+                    
+                    if file_cmd_res.returncode != 0:
+                        self._show_error(command_result=file_cmd_res)
                 
-                if file_cmd_res.returncode != 0:
-                    self._show_error(file_cmd_res)
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+                    self._show_error(command_result=e)
+                except FileNotFoundError as e:
+                    message = 'Не удается найти указанный файл или папку.'
+                    self._show_error(error=e, message=message)
+                except PermissionError:
+                    message = 'Отсутсвует разрешение на открытие указанного файла или папки.'
+                    self._show_error(error=e, message=message)
+                except OSError as e:
+                    self._show_error(error=e)
                 
             else:
                 map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
@@ -144,7 +159,8 @@ class ButtonsPerformer():
                     map_cmd, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.PIPE,
-                    startupinfo=startup_info
+                    startupinfo=startup_info,
+                    timeout=timeout
                 )
                 
                 if map_cmd_res.returncode == 0:
@@ -152,7 +168,8 @@ class ButtonsPerformer():
                     dir_cmd_res = subprocess.run(
                         dir_cmd, 
                         stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE
+                        stderr=subprocess.PIPE,
+                        timeout=timeout
                     )
                     
                     if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
@@ -161,14 +178,15 @@ class ButtonsPerformer():
                             disconn_cmd, 
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE,
-                            startupinfo=startup_info
+                            startupinfo=startup_info,
+                            timeout=timeout
                         )
                         
                     else:
-                        self._show_error(dir_cmd_res)
+                        self._show_error(command_result=dir_cmd_res)
                     
                 else:
-                    self._show_error(map_cmd_res)
+                    self._show_error(command_result=map_cmd_res)
         
         else:
             try:
@@ -194,12 +212,42 @@ class ButtonsPerformer():
                 
         btn.config(text=name)
         
-    def _show_error(self, command_result: subprocess.CompletedProcess[bytes]):
-        msg_cmd = f'net helpmsg {command_result.returncode}'
-        msg_cmd_res = subprocess.run(msg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    def _show_error(
+        self, 
+        command_result: typing.Union[
+            subprocess.CompletedProcess[bytes], 
+            subprocess.CalledProcessError, 
+            subprocess.TimeoutExpired
+        ]=None,
+        error: typing.Union[
+            FileNotFoundError,
+            PermissionError,
+            OSError
+        ]=None,
+        message: str=None
+    ):
+        if command_result:
+            msg_cmd = f'net helpmsg {command_result.returncode}'
+            msg_cmd_res = subprocess.run(msg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+            if message:
+                msg = f'{message}\n\nСетевая ошибка {command_result.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n{command_result.stderr.decode("ibm866").strip()}'
+            else:
+                msg = f'Возникла ошибка при выполнении операции.\n\nСетевая ошибка {command_result.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n{command_result.stderr.decode("ibm866").strip()}'
         
-        message = f'Возникла ошибка при выполнении операции.\n\nСетевая ошибка {command_result.returncode}.\n\n{msg_cmd_res.stdout.decode("ibm866").strip()}\n\n{command_result.stderr.decode("ibm866").strip()}'
-        Dialog().show_error(message)
+        elif error:
+            if message:
+                msg = f'{message}\n\n{error}'
+            else:
+                msg = f'Возникла ошибка при выполнении операции.\n\n{error}'
+                
+        else:
+            if message:
+                msg = message
+            else:
+                msg = 'Возникла ошибка при выполнении операции.'
+        
+        Dialog().show_error(msg)
         
     def _is_file(self, path: str) -> bool:
         file_extension_pattern = r'\.(?:exe|txt|json|csv|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|bat|mp3|mp4|avi|wav|wmv|mkv)$'
