@@ -129,64 +129,68 @@ class ButtonsPerformer():
             startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startup_info.wShowWindow = subprocess.SW_HIDE
             
-            if self._is_file(dir):
-                try:
-                    file_cmd_res = subprocess.run(
-                        dir,
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE,
-                        startupinfo=startup_info,
-                        timeout=timeout
-                    )
+            try:
+                if self._is_file(dir):
                     
-                    if file_cmd_res.returncode != 0:
-                        self._show_error(command_result=file_cmd_res)
-                
-                except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-                    self._show_error(command_result=e)
-                except FileNotFoundError as e:
-                    message = 'Не удается найти указанный файл или папку.'
-                    self._show_error(error=e, message=message)
-                except PermissionError:
-                    message = 'Отсутсвует разрешение на открытие указанного файла или папки.'
-                    self._show_error(error=e, message=message)
-                except OSError as e:
-                    self._show_error(error=e)
-                
-            else:
-                map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
-                map_cmd_res = subprocess.run(
-                    map_cmd, 
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE,
-                    startupinfo=startup_info,
-                    timeout=timeout
-                )
-                
-                if map_cmd_res.returncode == 0:
-                    dir_cmd = f'explorer "{dir}"'
-                    dir_cmd_res = subprocess.run(
-                        dir_cmd, 
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE,
-                        timeout=timeout
-                    )
-                    
-                    if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
-                        disconn_cmd = f'net use "{dir}" /delete'
-                        subprocess.run(
-                            disconn_cmd, 
+                        file_cmd_res = subprocess.run(
+                            dir,
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE,
                             startupinfo=startup_info,
                             timeout=timeout
                         )
                         
-                    else:
-                        self._show_error(command_result=dir_cmd_res)
+                        if file_cmd_res.returncode != 0:
+                            self._show_error(command_result=file_cmd_res)
                     
                 else:
-                    self._show_error(command_result=map_cmd_res)
+                    map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
+                    map_cmd_res = subprocess.run(
+                        map_cmd, 
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE,
+                        startupinfo=startup_info,
+                        timeout=timeout
+                    )
+                    
+                    if map_cmd_res.returncode == 0:
+                        dir_cmd = f'explorer "{dir}"'
+                        dir_cmd_res = subprocess.run(
+                            dir_cmd, 
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE,
+                            timeout=timeout
+                        )
+                        
+                        if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
+                            disconn_cmd = f'net use "{dir}" /delete'
+                            subprocess.run(
+                                disconn_cmd, 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.PIPE,
+                                startupinfo=startup_info,
+                                timeout=timeout
+                            )
+                            
+                        else:
+                            self._show_error(command_result=dir_cmd_res)
+                        
+                    else:
+                        self._show_error(command_result=map_cmd_res)
+                        
+            except subprocess.CalledProcessError as e:
+                self._show_error(command_result=e)
+            except subprocess.TimeoutExpired as e:
+                message = f'Превышено время ожидания ответа в {timeout} секунд.'
+                Dialog().show_error(message)
+            except FileNotFoundError as e:
+                message = 'Не удается найти указанный файл или папку.'
+                self._show_error(error=e, message=message)
+            except PermissionError:
+                message = 'Отсутсвует разрешение на открытие указанного файла или папки.'
+                self._show_error(error=e, message=message)
+            except OSError as e:
+                self._show_error(error=e)
         
         else:
             try:
@@ -216,10 +220,10 @@ class ButtonsPerformer():
         self, 
         command_result: typing.Union[
             subprocess.CompletedProcess[bytes], 
-            subprocess.CalledProcessError, 
-            subprocess.TimeoutExpired
+            subprocess.CalledProcessError
         ]=None,
         error: typing.Union[
+            subprocess.TimeoutExpired,
             FileNotFoundError,
             PermissionError,
             OSError
