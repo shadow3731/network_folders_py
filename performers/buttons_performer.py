@@ -123,11 +123,16 @@ class ButtonsPerformer():
         creds: dict
     ):
         if platform.system() == 'Windows':
+            startup_info = subprocess.STARTUPINFO()
+            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup_info.wShowWindow = subprocess.SW_HIDE
+            
             if self._is_file(dir):
                 file_cmd_res = subprocess.run(
                     dir,
                     stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE
+                    stderr=subprocess.PIPE,
+                    startupinfo=startup_info
                 )
                 
                 if file_cmd_res.returncode != 0:
@@ -138,7 +143,8 @@ class ButtonsPerformer():
                 map_cmd_res = subprocess.run(
                     map_cmd, 
                     stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE
+                    stderr=subprocess.PIPE,
+                    startupinfo=startup_info
                 )
                 
                 if map_cmd_res.returncode == 0:
@@ -154,7 +160,8 @@ class ButtonsPerformer():
                         subprocess.run(
                             disconn_cmd, 
                             stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE
+                            stderr=subprocess.PIPE,
+                            startupinfo=startup_info
                         )
                         
                     else:
