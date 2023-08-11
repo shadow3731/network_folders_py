@@ -3,13 +3,25 @@ import os, json, pickle, re, subprocess, socket, threading
 from dialog import Dialog
 
 class DataPerformer():
+    """The class for manipulating with service and appearance data.
+    
+    Attributes:
+        documents_folder (str): The user's local documents folder.
+        service_file_name (str): The name of the file where service data is contained.
+        appearance_file_name (str): The name of the file where appearance data is contained.
+        a_data_key (str): The key of service data which contains the filepath to JSON appearance file.
+        username_cred_key (str): The key of service data which contains the username of network credentials.
+        password_cred_key (str): The key of service data which contains the password of network credentials.
+        server_comp_name (str | None): The computer name where the appearance data is taken from.
+    """
     
     def __init__(self):
+        """Initializes DataPerformer instance."""
+        
         self.documents_folder = self._get_documents_folder()
         
         self.service_file_name = 'local_data.picke'
         self.appearance_file_name = 'local_visual.json'
-        # self.password_filename = 'password.picke'
         
         self.a_data_key = 'appearance_file_path'
         self.username_cred_key = 'username_credentials'
