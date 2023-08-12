@@ -278,7 +278,7 @@ class MenuPerformer():
         dp = DataPerformer()
         try:
             dp.save_appearance_data(
-                savabale_data=json.loads(data),
+                savable_data=json.loads(data),
                 filepath=dp.load_service_data()[dp.a_data_key]
             )
                 
