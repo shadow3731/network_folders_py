@@ -1,9 +1,25 @@
 class Converter():
+    """The class for converting the appearance data taken from a file to the correct dictionary."""
     
     def __init__(self):
         pass
     
     def return_valid_dictionary(self, raw_data: dict) -> dict: 
+        """Returns correct dictionary of the appearance data.
+        
+        Creates new appearance data based on the one taken from a file.
+        This new appearance data is a dictionary which has
+        necessary keys and values with right types.
+        
+        If there is no any necessary key in the raw appearance data,
+        puts a default value to the necessary key in the valid appearance data.
+        
+        Args:
+            raw_data (dict): The raw appearance data taken from a file.
+            
+        Returns:
+            The valid appearance data (dict) - with correct values and its types."""
+        
         if not raw_data:
             raw_data = {}
         

@@ -9,8 +9,22 @@ from performers.buttons_performer import ButtonsPerformer
 from performers.data_performer import DataPerformer
 
 class Application():
+    """The class for application control.
+    
+    Attributes:
+        root (tk.Tk): The root element of the application.
+        cursor (Cursor): The Cursor object for placing object on the window.
+        wp (WindowPerformer): The WindowPerformer object for a window control.
+        mp (MenuPerformer): The MenuPerformer object for a tool menu control.
+        gp (GroupsPerformer): The GroupsPerformer object for groups control.
+        bp (ButtonsPerformer): The ButtonsPerformer object for buttons control."""
     
     def __init__(self, data_performer: DataPerformer):
+        """Initializes Application instance.
+        
+        Args:
+            data_performer (DataPerformer): The DataPerformer object for service and appearance data control."""
+        
         self.root = tk.Tk()
         self.cursor = Cursor()
         self.wp = WindowPerformer()
@@ -19,6 +33,19 @@ class Application():
         self.bp = ButtonsPerformer(self.cursor, data_performer)
         
     def start(self, a_data: dict):
+        """Starts the sequence of operations to launch the application.
+        
+        Firstly shows tool menu bar, then creates field for displaying
+        groups and buttons with ceratain parameters.
+        If there is the appearance data, set initial Cursor values,
+        calculates positions of buttons and groups and displays them 
+        (if they exists). After this configures main window parameters 
+        and creates a scroll bar for scrolling the window
+        if there are too much buttons. Then shows the main window to a user.
+        
+        Args:
+            a_data (dict): The appearance data."""
+        
         self.mp.show_menu(self.root)
         
         canvas = tk.Canvas(master=self.root)
@@ -88,6 +115,19 @@ class Application():
         self.root.mainloop()
         
     def _set_cursor_values(self, data: dict) -> bool:
+        """Sets certain values for Cursor.
+        
+        The values are taken from the appearance data.
+        If there is any invalid value, shows 'askerror' window 
+        with error description.
+        
+        Args:
+            data (dict): The appearance data.
+            
+        Returns:
+            True (bool) - if all data are correctly set.
+            False (bool) - if not."""
+        
         try:
             self.cursor.x = data['window']['padding']
             self.cursor.y = data['window']['padding']
@@ -106,4 +146,11 @@ class Application():
             return False
                 
     def _on_mousewheel(self, event, canvas: tk.Canvas):
+        """Listens to the scroll event.
+        
+        Displays that part of the window, where a user scrolled to.
+        
+        Args:
+            canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects."""
+        
         canvas.yview_scroll(-1*(event.delta // 120), 'units')
