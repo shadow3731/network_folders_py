@@ -218,17 +218,9 @@ class ButtonsPerformer():
         
     def _show_error(
         self, 
-        command_result: typing.Union[
-            subprocess.CompletedProcess[bytes], 
-            subprocess.CalledProcessError
-        ]=None,
-        error: typing.Union[
-            subprocess.TimeoutExpired,
-            FileNotFoundError,
-            PermissionError,
-            OSError
-        ]=None,
-        message: str=None
+        message: str=None,
+        command_result=None,
+        error=None
     ):
         if command_result:
             msg_cmd = f'net helpmsg {command_result.returncode}'
