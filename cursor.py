@@ -1,4 +1,14 @@
 class Cursor():
+    """The class for calculating objects placement on the window.
+    
+    Attributes:
+        x (int): X-coordinate of the object on the screen.
+        y (int): X-coordinate of the object on the screen.
+        width (int): The width of the object on the screen.
+        height (int): The height of the object on the screen.
+        padding (int): The distance between the total object area and the real one.
+        right_padding (int): The distance between the last object in the row and right edge of the window.
+        scr_width (int): The window width."""
     
     def __init__(
         self, 
@@ -8,7 +18,7 @@ class Cursor():
         height = 0, 
         padding = 0,
         right_padding = 0,
-        max_width = 0
+        scr_width = 0
     ):
         self.x = init_x
         self.y = init_y
@@ -16,9 +26,28 @@ class Cursor():
         self.height = height
         self.padding = padding
         self.right_padding = right_padding
-        self.screen_width = max_width
+        self.screen_width = scr_width
     
     def place_button(self, button: dict) -> tuple:
+        """Calculates a button positions.
+        
+        Positions of the button contain X- and Y-coordinate,
+        width and height. These values are saved in a tuple,
+        which is returned after calculation.
+        
+        If X-coordinate of the Cursor and width of the current button
+        are out of the width of the window, X- and Y-coordinate
+        of the Cursor transfer to new position.
+        
+        After calulating a button positions, Cursor changes 
+        its X-coordinate.
+        
+        Args:
+            button (dict): The appearance data of a button.
+            
+        Returns:
+            Positions (tuple) - of a button on the window."""
+        
         if self.x + button['size']*self.width > self.screen_width - self.padding - self.right_padding:
             self.x = self.padding
             self.y += self.height - self.padding
@@ -35,6 +64,21 @@ class Cursor():
         return button_positions
     
     def place_group(self, lower_y: int) -> tuple:
+        """Calculates a group positions.
+        
+        Positions of the group contain X- and Y-coordinate,
+        width and height. These values are saved in a tuple,
+        which is returned after calculation.
+        
+        After calulating a group positions, Cursor changes 
+        its Y-coordinate.
+        
+        Args:
+            lower_y (int): The lower Y-coordinate of the last button in this group.
+            
+        Returns:
+            Positions (tuple) - of a group on the window."""
+        
         group_positions: tuple = (
             self.x,
             self.y,
@@ -47,5 +91,7 @@ class Cursor():
         return group_positions
     
     def move_to_new_group(self):
+        """Moves Cursor to new position."""
+        
         self.x = self.padding
         self.y += self.height + 3*self.padding
