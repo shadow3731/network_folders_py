@@ -13,7 +13,8 @@ class Dialog():
         """Shows the 'askerror' dialog window with certain message.
         
         Args:
-            message (str): Error message to be shown."""
+            message (str): Error message to be shown.
+        """
         
         mb.showerror(
             title='Ошибка',
@@ -35,7 +36,8 @@ class Dialog():
         is user's desktop.
         
         Returns:
-            File name (str) - of the JSON-file with the appearance data."""
+            str: File name of the JSON-file with the appearance data.
+        """
         
         file = fd.askopenfile(
             title='Открыть файл визуализации',

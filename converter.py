@@ -18,7 +18,8 @@ class Converter():
             raw_data (dict): The raw appearance data taken from a file.
             
         Returns:
-            The valid appearance data (dict) - with correct values and its types."""
+            dict: The valid appearance data with correct values and its types.
+        """
         
         if not raw_data:
             raw_data = {}

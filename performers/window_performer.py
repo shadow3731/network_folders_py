@@ -5,11 +5,26 @@ import tkinter as tk
 from dialog import Dialog
 
 class WindowPerformer():
+    """The class for a window handling."""
     
     def __init__(self):
         pass
     
-    def show_window(self, roots: dict, data: dict = None, groups_pos: list = None):
+    def show_window(self, roots: dict, data: dict=None, groups_pos: list=None):
+        """Shows main window.
+        
+        Sets title, icon, screen size options to the window.
+        
+        Gets values of width and height of the window from 
+        the appearance data. If there are no such values, 
+        sets the default ones.
+
+        Args:
+            roots (dict): Roots elements of the main window.
+            data (dict, optional): The appearance data. Defaults to None.
+            groups_pos (list, optional): The positions of the Groups. Defaults to None.
+        """
+        
         roots['root'].title(data['app_name'])
         roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
@@ -47,6 +62,18 @@ class WindowPerformer():
         )
         
     def center_window(self, root: tk.Tk, width: int, height: int):
+        """Places the window at the center of the root element.
+        
+        Gets screen width and height of the root element, 
+        calculates its center point and places this window 
+        at the center of the root.
+        
+        Args:
+            root (tk.Tk): The root element of tkinter.
+            width (int): Custom width of the window.
+            height (int): Custom height of the window.
+        """
+        
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
         
@@ -55,17 +82,46 @@ class WindowPerformer():
         
         root.geometry(f"{width}x{height}+{x_offset}+{y_offset}")
         
-    def configure_window(self, window: tk.Tk, root: tk.Tk):
+    def configure_window(self, window: tk.Tk):
+        """Sets some configurations to the window.
+        
+        Sets if the window can be resizable, an icon, 
+        and if the window has tool buttons at the top right corner.
+
+        Args:
+            window (tk.Tk): The window element of tkinter.
+        """
+        
         window.resizable(width=False, height=False)
         window.iconbitmap('')
         window.attributes('-toolwindow', 1)
-        # window.transient(root)
         
     def _congigure_roots(self, roots: dict, height: int):
+        """Configures some attributes of root elements of the main window.
+        
+        Args:
+            roots (dict): The roots elements of the main window.
+            height (int): Custom height of the root elements.
+        """
+        
         roots['frame'].config(height=height)
         roots['canvas'].config(height=height)
         
     def _get_icon_path(self, rel_path) -> str:
+        """Gets the directory of the applicatio icon.
+        
+        Searches the icon inside of Temp folder, 
+        where the application was extracted. If there is no 
+        such a folder, searches it inside of the same directory 
+        as the executable file.
+        
+        Args:
+            rel_path (str): The relative path of the icon.
+            
+        Returns:
+            str: The directory of the icon.
+        """
+        
         try:
             base_path = sys._MEIPASS
         except Exception:

@@ -17,13 +17,15 @@ class Application():
         wp (WindowPerformer): The WindowPerformer object for a window control.
         mp (MenuPerformer): The MenuPerformer object for a tool menu control.
         gp (GroupsPerformer): The GroupsPerformer object for groups control.
-        bp (ButtonsPerformer): The ButtonsPerformer object for buttons control."""
+        bp (ButtonsPerformer): The ButtonsPerformer object for buttons control.
+    """
     
     def __init__(self, data_performer: DataPerformer):
         """Initializes Application instance.
         
         Args:
-            data_performer (DataPerformer): The DataPerformer object for service and appearance data control."""
+            data_performer (DataPerformer): The DataPerformer object for service and appearance data control.
+        """
         
         self.root = tk.Tk()
         self.cursor = Cursor()
@@ -44,7 +46,8 @@ class Application():
         if there are too much buttons. Then shows the main window to a user.
         
         Args:
-            a_data (dict): The appearance data."""
+            a_data (dict): The appearance data.
+        """
         
         self.mp.show_menu(self.root)
         
@@ -125,8 +128,9 @@ class Application():
             data (dict): The appearance data.
             
         Returns:
-            True (bool) - if all data are correctly set.
-            False (bool) - if not."""
+            bool (True): If all data are correctly set.
+            bool (False): If not.
+        """
         
         try:
             self.cursor.x = data['window']['padding']
@@ -151,6 +155,7 @@ class Application():
         Displays that part of the window, where a user scrolled to.
         
         Args:
-            canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects."""
+            canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects.
+        """
         
         canvas.yview_scroll(-1*(event.delta // 120), 'units')

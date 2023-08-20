@@ -18,7 +18,8 @@ class DataPerformer():
     def __init__(self):
         """Initializes DataPerformer instance.
         
-        If a user has suitable OS, then gets the user's Documents folder."""
+        If a user has suitable OS, then gets the user's Documents folder.
+        """
         
         self.documents_folder = self._get_documents_folder()
         
@@ -39,8 +40,9 @@ class DataPerformer():
         If there is no file containing the service data, creates it.
         
         Returns:
-            The service data (dict) - if the service data from file was read successfully;
-            None - if not or if the user's Documents folder was not defined."""
+            dict: The service data, if the service data from file was read successfully;
+            None: If not or if the user's Documents folder was not defined.
+        """
         
         if self.documents_folder:
             filepath = f'{self.documents_folder}\\{self.service_file_name}'
@@ -66,7 +68,8 @@ class DataPerformer():
         which is inside of the user's Documents folder.
         
         Args:
-            savable_data (dict): the new or updated service data."""
+            savable_data (dict): the new or updated service data.
+        """
         
         if self.documents_folder:
             filepath = f'{self.documents_folder}\\{self.service_file_name}'
@@ -93,7 +96,8 @@ class DataPerformer():
             filepath (str): the filepath of the file with appearance data which is on the server computer.
             
         Returns:
-            The appearance data (dict): if the file was found and was correctly read or tries to do it locally."""
+            dict: The appearance data, if the file was found and was correctly read or tries to do it locally.
+        """
         
         if self.server_comp_name and self._is_server_online(self.server_comp_name):
             if os.path.exists(filepath):
@@ -133,8 +137,9 @@ class DataPerformer():
         with error description.
             
         Returns:
-            The appearance data (dict): if the file was found and was correctly read. 
-            None - if the user's Documents folder or filepath to the file does not exist, or if an error occured while reading the file."""
+            dict: The appearance data, if the file was found and was correctly read. 
+            None: If the user's Documents folder or filepath to the file does not exist, or if an error occured while reading the file.
+        """
         
         if self.documents_folder:
             local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
@@ -162,7 +167,8 @@ class DataPerformer():
         
         Args:
             savable_data (dict): the new or updated appearance data,
-            filepath (str): the path where the appearance data is needed to be saved."""
+            filepath (str): the path where the appearance data is needed to be saved.
+        """
         
         with open(filepath, 'w', encoding='utf-8-sig') as f:
             json.dump(savable_data, f, indent=4)
@@ -176,7 +182,8 @@ class DataPerformer():
         
         Args:
             target (str): the file which is needed to create,
-            filepath (str): the path of this file."""
+            filepath (str): the path of this file.
+        """
         
         if target == 'service_data':
             if not os.path.exists(filepath):
@@ -202,8 +209,9 @@ class DataPerformer():
         creates 'askerror' window reporting about the error.
         
         Returns:
-            Local folder of data of the application (str).
-            None - if unable to define the user's OS or create local folder."""
+            str: Local folder of data of the application.
+            None: If unable to define the user's OS or create local folder.
+        """
         
         if os.name == 'nt':
             doc_dir = f"{os.path.join(os.environ['USERPROFILE'], 'Documents')}"
@@ -241,8 +249,9 @@ class DataPerformer():
             filepath (str): the path to the file with appearance data.
             
         Returns:
-            The server computer IP or name (str) - if defined.
-            None - if not."""
+            str:The server computer IP or name if defined.
+            None: If not.
+        """
         
         match = re.match(r'//([^/]+)', filepath)
         
@@ -261,8 +270,9 @@ class DataPerformer():
         tries to connect to the server computer by sockets.
         
         Returns:
-            True (bool) - if the result code is 0 or the socket connection to the server computer is established.
-            False (bool) - if not."""
+            bool (True): If the result code is 0 or the socket connection to the server computer is established.
+            bool (False): If not.
+        """
         
         result = subprocess.run(
             ['ping', '-c', '1', '-W', '1', host], 

@@ -12,7 +12,8 @@ class ButtonsPerformer():
     
     Attributes:
         cursor (Cursor): The Cursor object for placing object on the window.
-        dp (DataPerformer): The DataPerformer object for handling the data."""
+        dp (DataPerformer): The DataPerformer object for handling the data.
+    """
     
     def __init__(self, cursor: Cursor, data_performer: DataPerformer):
         """Initializes ButtonPerformer instance."""
@@ -38,8 +39,9 @@ class ButtonsPerformer():
             data (dict): The appearance data.
             
         Returns:
-            Positions (list) - of all the buttons on the window. 
-            None - if there are no Groups or Buttons in the appearance data."""
+            list: Positions of all the buttons on the window. 
+            None: If there are no Groups or Buttons in the appearance data.
+        """
         
         positions: list = []
         
@@ -85,7 +87,8 @@ class ButtonsPerformer():
         Args:
             data (dict): The appearance data,
             positions (list): The positions of all Buttons.
-            root (tk.Frame): The root element where Buttons are displayed."""
+            root (tk.Frame): The root element where Buttons are displayed.
+        """
         
         s_data = self.dp.load_service_data()
         credentials = {
@@ -149,7 +152,8 @@ class ButtonsPerformer():
         Args:
             button (tk.Button): The Button object of tkinter,
             b_data (dict): The appearance data of this Button,
-            s_data (dict): The service data."""
+            s_data (dict): The service data.
+        """
         
         button_name = b_data['name']
         button_dir = b_data['path']
@@ -190,7 +194,8 @@ class ButtonsPerformer():
             dir (str): The network directory to be opened,
             btn (Button): The Button object of tkinter,
             name (str): The name of the Button,
-            creds (dict): Network credentials."""
+            creds (dict): Network credentials.
+        """
         
         timeout = 10.0
         
@@ -329,8 +334,9 @@ class ButtonsPerformer():
         """Defines if the direcory is file with RegEx.
         
         Returns:
-            True (bool) - if the directory is a file.
-            False (bool) - if the direcory is a folder."""
+            bool (True): If the directory is a file.
+            bool (False): If the direcory is a folder.
+        """
         
         file_extension_pattern = r'\.(?:exe|txt|json|csv|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|bat|mp3|mp4|avi|wav|wmv|mkv)$'
         return re.search(file_extension_pattern, path, re.IGNORECASE) is not None

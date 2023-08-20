@@ -8,7 +8,8 @@ class Cursor():
         height (int): The height of the object on the screen.
         padding (int): The distance between the total object area and the real one.
         right_padding (int): The distance between the last object in the row and right edge of the window.
-        scr_width (int): The window width."""
+        scr_width (int): The window width.
+    """
     
     def __init__(
         self, 
@@ -46,7 +47,8 @@ class Cursor():
             button (dict): The appearance data of a button.
             
         Returns:
-            Positions (tuple) - of a button on the window."""
+            tuple: Positions of a button on the window.
+        """
         
         if self.x + button['size']*self.width > self.screen_width - self.padding - self.right_padding:
             self.x = self.padding
@@ -77,7 +79,8 @@ class Cursor():
             lower_y (int): The lower Y-coordinate of the last button in this group.
             
         Returns:
-            Positions (tuple) - of a group on the window."""
+            tuple: Positions of a group on the window.
+        """
         
         group_positions: tuple = (
             self.x,
