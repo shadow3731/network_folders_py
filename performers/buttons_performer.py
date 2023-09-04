@@ -163,7 +163,7 @@ class ButtonsPerformer():
             target=self._open_directory,
             args=(button_dir, button, button_name, s_data)
         ).start()
-
+        
         button.config(
             relief=tk.SOLID,
             borderwidth=1,
@@ -205,18 +205,19 @@ class ButtonsPerformer():
             startup_info.wShowWindow = subprocess.SW_HIDE
             
             try:
-                # if self._is_file(dir):   
-                #     file_cmd_res = subprocess.run(
-                #         dir,
-                #         stdout=subprocess.PIPE, 
-                #         stderr=subprocess.PIPE,
-                #         startupinfo=startup_info
-                #     )
+                if self._is_file(dir):
+                    file_cmd_res = subprocess.run(
+                        dir,
+                        stdout=subprocess.PIPE, 
+                        stderr=subprocess.PIPE,
+                        startupinfo=startup_info
+                    )
                         
-                #     if file_cmd_res.returncode != 0:
-                #         self._show_error(command_result=file_cmd_res)
+                    if file_cmd_res.returncode != 0:
+                        self._show_error(command_result=file_cmd_res)
                     
-                # else:
+                else:
+                
                     map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
                     map_cmd_res = subprocess.run(
                         map_cmd, 
@@ -227,23 +228,13 @@ class ButtonsPerformer():
                     )
                     
                     if map_cmd_res.returncode == 0:
-                        if self._is_file(dir):
-                            dir_cmd = f'start "{dir}"'
-                            dir_cmd_res = subprocess.run(
-                                dir_cmd,
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE,
-                                timeout=timeout
-                            )
-                            
-                        else:
-                            dir_cmd = f'explorer "{dir}"'
-                            dir_cmd_res = subprocess.run(
-                                dir_cmd, 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE,
-                                timeout=timeout
-                            )
+                        dir_cmd = f'explorer "{dir}"'
+                        dir_cmd_res = subprocess.run(
+                            dir_cmd, 
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE,
+                            timeout=timeout
+                        )
                         
                         if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
                             disconn_cmd = f'net use "{dir}" /delete'
