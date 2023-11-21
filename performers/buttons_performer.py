@@ -116,7 +116,8 @@ class ButtonsPerformer():
                     '<Button-1>', 
                     lambda e, 
                         button=button,
-                        data=button_data: 
+                        data=button_data,
+                        credentials=credentials: 
                             self._start_action(e, button, data, credentials)
                 )
                 
@@ -124,7 +125,8 @@ class ButtonsPerformer():
                     '<Return>', 
                     lambda e, 
                         button=button,
-                        data=button_data: 
+                        data=button_data,
+                        credentials=credentials: 
                             self._start_action(e, button, data, credentials)
                 )
                     

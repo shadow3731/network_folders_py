@@ -21,6 +21,7 @@ def start():
     service_data = dp.load_service_data()
     if service_data:
         raw_appearance_data = dp.load_data_from_server(
+            target=dp.a_data_key,
             filepath=service_data[dp.a_data_key]
         )
         appearance_data = Converter().return_valid_dictionary(
@@ -29,6 +30,7 @@ def start():
         
         if service_data[dp.creds_import_mode_key] == 'True':
             credentials_data = dp.load_data_from_server(
+                target=dp.c_data_key,
                 filepath=service_data[dp.c_data_key]
             )
             

@@ -78,7 +78,7 @@ class DataPerformer():
             with open(filepath, 'wb') as f:
                 pickle.dump(savable_data, f)
                 
-    def load_data_from_server(self, filepath: str) -> dict:
+    def load_data_from_server(self, target: str, filepath: str) -> dict:
         """Loads the appearance data from a server.
         
         If the server is defined and is currently online,
@@ -107,7 +107,7 @@ class DataPerformer():
                     with open(filepath, encoding='utf-8-sig') as f:
                         data = json.load(f)
                         
-                        if filepath == self.a_data_key:
+                        if target == self.a_data_key:
                             local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
                             self.save_appearance_data(data, local_filepath)
                         
@@ -125,12 +125,12 @@ class DataPerformer():
                         args=(message,)
                     ).start()
                     
-                    if filepath == self.a_data_key:
+                    if target == self.a_data_key:
                         return self.load_data_locally()
                     else:
                         return None
         
-        if filepath == self.a_data_key:
+        if target == self.a_data_key:
             return self.load_data_locally()
         else:
             return None

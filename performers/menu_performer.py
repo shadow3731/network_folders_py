@@ -1,5 +1,4 @@
 import tkinter as tk
-import json
 
 from performers.data_performer import DataPerformer
 from performers.window_performer import WindowPerformer
@@ -31,9 +30,14 @@ class MenuPerformer():
         self.menu = tk.Menu(master=root, tearoff=0)
         root.config(menu=self.menu)
         
-        options_menu = self._show_options_menu(root)
-        
-        self.menu.add_cascade(label='Опции', menu=options_menu)
+        self.menu.add_cascade(
+            label='Опции', 
+            menu=self._show_options_menu(root)
+        )
+        self.menu.add_cascade(
+            label='Помощь', 
+            menu=self._show_help_menu(root)
+        )
         
     def _show_options_menu(self, root: tk.Tk) -> tk.Menu:
         """Shows inner menu of the main toolbar menu.
@@ -233,3 +237,46 @@ class MenuPerformer():
                     s_data[self.dp.creds_import_mode_key] = 'True'
                     
                 self.dp.save_service_data(s_data)
+                
+    def _show_help_menu(self, root: tk.Tk) -> tk.Menu:
+        help_menu = tk.Menu(master=root, tearoff=0)
+        help_menu.add_command(
+            label='Справка',
+            command=lambda: self._show_help(help_menu)
+        )
+        
+        return help_menu
+    
+    def _show_help(self, root: tk.Menu):
+        modal_window = tk.Toplevel(
+            master=root,
+            width=400,
+            height=530    
+        )
+        
+        WindowPerformer().center_window(modal_window, 400, 530)
+        WindowPerformer().configure_window(modal_window)
+        modal_window.title('Справка')
+        modal_window.focus_set()
+        
+        with open('performers/help.txt', encoding='utf-8') as file:
+            text = file.read()
+        
+        text_field = tk.Text(
+            master=modal_window,
+            wrap=tk.NONE,
+            width=len(text),
+            height=530,
+            bd=0,
+            highlightthickness=0,
+            font=('Times New Roman', 11),
+            bg=modal_window.cget('bg')
+        )
+        text_field.insert(tk.END, text)
+        text_field.pack()
+        text_field.config(
+            state=tk.DISABLED, 
+            cursor=''
+        )
+        
+        modal_window.wait_window()
