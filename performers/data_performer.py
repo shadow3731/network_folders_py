@@ -27,6 +27,8 @@ class DataPerformer():
         self.appearance_file_name = 'local_visual.json'
         
         self.a_data_key = 'appearance_file_path'
+        self.creds_import_mode_key = 'credentials_import_mode'
+        self.c_data_key = 'credentials_file_path'
         self.username_cred_key = 'username_credentials'
         self.password_cred_key = 'password_credentials'
         
@@ -76,7 +78,7 @@ class DataPerformer():
             with open(filepath, 'wb') as f:
                 pickle.dump(savable_data, f)
                 
-    def load_appearance_data_from_server(self, filepath: str) -> dict:
+    def load_data_from_server(self, filepath: str) -> dict:
         """Loads the appearance data from a server.
         
         If the server is defined and is currently online,
@@ -105,24 +107,35 @@ class DataPerformer():
                     with open(filepath, encoding='utf-8-sig') as f:
                         data = json.load(f)
                         
-                        local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
-                        self.save_appearance_data(data, local_filepath)
+                        if filepath == self.a_data_key:
+                            local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
+                            self.save_appearance_data(data, local_filepath)
                         
                         return data
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                    message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
+                    if filepath == self.a_data_key:
+                        message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
+                    elif filepath == self.c_data_key:
+                        message = f'Не удалось выгрузить данные из файла сетевых учетных данных, находящегося на сервере.\n\n{e}'
+                        
                     dialog = Dialog()
                     threading.Thread(
                         target=dialog.show_error,
                         args=(message,)
                     ).start()
                     
-                    return self.load_appearance_data_locally()
+                    if filepath == self.a_data_key:
+                        return self.load_data_locally()
+                    else:
+                        return None
         
-        return self.load_appearance_data_locally()
+        if filepath == self.a_data_key:
+            return self.load_data_locally()
+        else:
+            return None
         
-    def load_appearance_data_locally(self) -> dict:
+    def load_data_locally(self) -> dict:
         """Loads the appearance data from the user's local computer.
         
         If the user's Documents folder is defined, and the the path 
@@ -189,6 +202,8 @@ class DataPerformer():
             if not os.path.exists(filepath):
                 data = {
                     self.a_data_key: '',
+                    self.creds_import_mode_key: 'False',
+                    self.c_data_key: '',
                     self.username_cred_key: '',
                     self.password_cred_key: ''
                 }
@@ -231,7 +246,7 @@ class DataPerformer():
             pass
         
         except Exception as e:
-            message = 'Во время выполнения операции создания локальной папки для этой программы произошла ошибка.\n\n{e}'
+            message = f'Во время выполнения операции создания локальной папки для этой программы произошла ошибка.\n\n{e}'
             Dialog().show_error(message)
             
             return None

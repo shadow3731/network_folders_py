@@ -26,7 +26,7 @@ class WindowPerformer():
         """
         
         roots['root'].title(data['app_name'])
-        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
+        # roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500

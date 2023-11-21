@@ -20,13 +20,24 @@ def start():
     dp = DataPerformer()
     service_data = dp.load_service_data()
     if service_data:
-        raw_appearance_data = dp.load_appearance_data_from_server(
-            filepath=service_data['appearance_file_path']
+        raw_appearance_data = dp.load_data_from_server(
+            filepath=service_data[dp.a_data_key]
         )
-        
         appearance_data = Converter().return_valid_dictionary(
             raw_appearance_data
         )
+        
+        if service_data[dp.creds_import_mode_key] == 'True':
+            credentials_data = dp.load_data_from_server(
+                filepath=service_data[dp.c_data_key]
+            )
+            
+            if credentials_data:
+                service_data[dp.username_cred_key] = credentials_data['username']
+                service_data[dp.password_cred_key] = credentials_data['password']
+                
+                dp.save_service_data(service_data)
+            
         
         Application(dp).start(appearance_data)
 

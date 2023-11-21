@@ -75,8 +75,8 @@ class MenuPerformer():
         
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
         config_file_menu.add_command(
-            label='Открыть', 
-            command=self._open_visual_file
+            label='Импорт', 
+            command=lambda: self._import_file(self.dp.a_data_key)
         )
         
         return config_file_menu
@@ -101,6 +101,10 @@ class MenuPerformer():
         config_file_menu.add_command(
             label='Изменить', 
             command=lambda: self._set_network_credentials(master_menu)
+        )
+        config_file_menu.add_command(
+            label='Импорт',
+            command=lambda: self._import_file(self.dp.c_data_key)
         )
         
         return config_file_menu
@@ -195,6 +199,7 @@ class MenuPerformer():
         """
         
         s_data = self.dp.load_service_data()
+        s_data[self.dp.creds_import_mode_key] = 'False'
         s_data[self.dp.username_cred_key] = user
         s_data[self.dp.password_cred_key] = passw
         
@@ -202,15 +207,15 @@ class MenuPerformer():
         
         window.destroy()
             
-    def _open_visual_file(self):
+    def _import_file(self, key: str):
         """Opens the built-in filedialog to find the file 
         with appearance data. If user found it, 
         the application saves it."""
         
         filedir = Dialog().open_file_dialog()
-        self._save_file_directory(filedir)
+        self._save_file_directory(key, filedir)
             
-    def _save_file_directory(self, dir: str):
+    def _save_file_directory(self, key: str, dir: str):
         """Saves filedirecory of the appearnace data 
         as a part of the service data.
         
@@ -223,5 +228,8 @@ class MenuPerformer():
         if dir:
             s_data = self.dp.load_service_data()
             if s_data:
-                s_data[self.dp.a_data_key] = dir
+                s_data[key] = dir
+                if key == self.dp.c_data_key:
+                    s_data[self.dp.creds_import_mode_key] = 'True'
+                    
                 self.dp.save_service_data(s_data)
