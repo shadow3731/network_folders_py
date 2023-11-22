@@ -79,7 +79,7 @@ class MenuPerformer():
         
         config_file_menu = tk.Menu(master=master_menu, tearoff=0)
         config_file_menu.add_command(
-            label='Импорт', 
+            label='Импортировать', 
             command=lambda: self._import_file(self.dp.a_data_key)
         )
         
@@ -105,10 +105,6 @@ class MenuPerformer():
         config_file_menu.add_command(
             label='Изменить', 
             command=lambda: self._set_network_credentials(master_menu)
-        )
-        config_file_menu.add_command(
-            label='Импорт',
-            command=lambda: self._import_file(self.dp.c_data_key)
         )
         
         return config_file_menu
@@ -233,8 +229,7 @@ class MenuPerformer():
             s_data = self.dp.load_service_data()
             if s_data:
                 s_data[key] = dir
-                if key == self.dp.c_data_key:
-                    s_data[self.dp.creds_import_mode_key] = 'True'
+                s_data[self.dp.creds_import_mode_key] = 'True'
                     
                 self.dp.save_service_data(s_data)
                 
@@ -261,22 +256,52 @@ class MenuPerformer():
         
         with open('performers/help.txt', encoding='utf-8') as file:
             text = file.read()
+            
+        upper_frame = tk.Frame(master=modal_window)
+        upper_frame.pack(
+            side=tk.TOP,
+            fill=tk.X
+        )
         
         text_field = tk.Text(
-            master=modal_window,
+            master=upper_frame,
             wrap=tk.NONE,
-            width=len(text),
-            height=530,
+            width=54,
+            height=28,
             bd=0,
             highlightthickness=0,
             font=('Times New Roman', 11),
             bg=modal_window.cget('bg')
         )
         text_field.insert(tk.END, text)
-        text_field.pack()
-        text_field.config(
-            state=tk.DISABLED, 
-            cursor=''
+        text_field.pack(side=tk.LEFT)
+        
+        scrollbar = tk.Scrollbar(
+            master=upper_frame,
+            command=text_field.yview
+        )
+        scrollbar.pack(
+            side=tk.RIGHT,
+            fill=tk.Y
         )
         
+        text_field.config(
+            state=tk.DISABLED, 
+            cursor='',
+            yscrollcommand=scrollbar.set
+        )
+        
+        close_button = tk.Button(
+            master=modal_window,
+            width=10,
+            text='Закрыть',
+            command=lambda: self._close_help(
+                window=modal_window
+            )
+        )
+        close_button.pack(side=tk.RIGHT, padx=5)
+        
         modal_window.wait_window()
+        
+    def _close_help(self, window: tk.Toplevel):
+        window.destroy()

@@ -24,11 +24,10 @@ class DataPerformer():
         self.documents_folder = self._get_documents_folder()
         
         self.service_file_name = 'local_data.picke'
-        self.appearance_file_name = 'local_visual.json'
+        self.data_file_name = 'local_app_data.json'
         
-        self.a_data_key = 'appearance_file_path'
+        self.a_data_key = 'app_data_file_path'
         self.creds_import_mode_key = 'credentials_import_mode'
-        self.c_data_key = 'credentials_file_path'
         self.username_cred_key = 'username_credentials'
         self.password_cred_key = 'password_credentials'
         
@@ -78,7 +77,7 @@ class DataPerformer():
             with open(filepath, 'wb') as f:
                 pickle.dump(savable_data, f)
                 
-    def load_data_from_server(self, target: str, filepath: str) -> dict:
+    def load_data_from_server(self, filepath: str) -> dict:
         """Loads the appearance data from a server.
         
         If the server is defined and is currently online,
@@ -107,17 +106,13 @@ class DataPerformer():
                     with open(filepath, encoding='utf-8-sig') as f:
                         data = json.load(f)
                         
-                        if target == self.a_data_key:
-                            local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
-                            self.save_appearance_data(data, local_filepath)
+                        local_filepath = f'{self.documents_folder}/{self.data_file_name}'
+                        self.save_appearance_data(data, local_filepath)
                         
                         return data
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                    if filepath == self.a_data_key:
-                        message = f'Не удалось выгрузить данные из файла визуализации, находящегося на сервере.\n\n{e}'
-                    elif filepath == self.c_data_key:
-                        message = f'Не удалось выгрузить данные из файла сетевых учетных данных, находящегося на сервере.\n\n{e}'
+                    message = f'Не удалось выгрузить данные из файла конфигурации, находящегося на сервере.\n\n{e}'
                         
                     dialog = Dialog()
                     threading.Thread(
@@ -125,15 +120,9 @@ class DataPerformer():
                         args=(message,)
                     ).start()
                     
-                    if target == self.a_data_key:
-                        return self.load_data_locally()
-                    else:
-                        return None
+                    return self.load_data_locally()
         
-        if target == self.a_data_key:
-            return self.load_data_locally()
-        else:
-            return None
+        return self.load_data_locally()
         
     def load_data_locally(self) -> dict:
         """Loads the appearance data from the user's local computer.
@@ -155,7 +144,7 @@ class DataPerformer():
         """
         
         if self.documents_folder:
-            local_filepath = f'{self.documents_folder}/{self.appearance_file_name}'
+            local_filepath = f'{self.documents_folder}/{self.data_file_name}'
             if os.path.exists(local_filepath):
                 try:
                     with open(local_filepath, encoding='utf-8-sig') as f:
@@ -203,7 +192,6 @@ class DataPerformer():
                 data = {
                     self.a_data_key: '',
                     self.creds_import_mode_key: 'False',
-                    self.c_data_key: '',
                     self.username_cred_key: '',
                     self.password_cred_key: ''
                 }

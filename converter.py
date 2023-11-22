@@ -28,6 +28,15 @@ class Converter():
         
         data['app_name'] = 'Network Folders' if not raw_data.get('app_name') else raw_data['app_name']
         
+        data['credentials'] = {} if not raw_data.get('credentials') else raw_data['credentials']
+        if raw_data.get('credentials'):
+            data['credentials']['username'] = '' if not raw_data['credentials'].get('username') else raw_data['credentials']['username']
+            data['credentials']['password'] = '' if not raw_data['credentials'].get('password') else raw_data['credentials']['password']
+        
+        else:
+            data['credentials']['username'] = ''
+            data['credentials']['password'] = ''
+        
         data['window'] = {} if not raw_data.get('window') else raw_data['window']
         if raw_data.get('window'):
             data['window']['width'] = 695 if not raw_data['window'].get('width') else int(raw_data['window']['width'])
