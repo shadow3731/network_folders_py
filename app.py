@@ -53,15 +53,19 @@ class Application():
         
         canvas = tk.Canvas(master=self.root)
         canvas.place(x=0, y=-5, relwidth=1, relheight=1)
-        canvas.bind_all(
-            '<MouseWheel>', 
-            lambda e, canvas=canvas: self._on_mousewheel(e, canvas)
-        )
         
         frame = tk.Frame(
             master=canvas, 
             width=canvas.winfo_screenwidth(),
             height=canvas.winfo_screenheight()
+        )
+        
+        canvas.bind_all(
+            '<MouseWheel>', 
+            lambda e, 
+                canvas=canvas,
+                frame=frame: 
+                    self._on_mousewheel(e, canvas, frame)
         )
         
         root_elements = {
@@ -149,7 +153,7 @@ class Application():
             
             return False
                 
-    def _on_mousewheel(self, event, canvas: tk.Canvas):
+    def _on_mousewheel(self, event, canvas: tk.Canvas, frame: tk.Frame):
         """Listens to the scroll event.
         
         Displays that part of the window, where a user scrolled to.
@@ -158,4 +162,6 @@ class Application():
             canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects.
         """
         
-        canvas.yview_scroll(-1*(event.delta // 120), 'units')
+        print(event.widget)
+        if event.widget != :
+            canvas.yview_scroll(-1*(event.delta // 120), 'units')

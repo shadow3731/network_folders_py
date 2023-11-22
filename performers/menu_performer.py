@@ -126,7 +126,7 @@ class MenuPerformer():
         WindowPerformer().center_window(modal_window, 400, 120)
         WindowPerformer().configure_window(modal_window)
         modal_window.title('Изменить сетевые учетные данные')
-        modal_window.focus_set()
+        modal_window.grab_set()
         
         s_data = self.dp.load_service_data()
         
@@ -252,7 +252,7 @@ class MenuPerformer():
         WindowPerformer().center_window(modal_window, 400, 530)
         WindowPerformer().configure_window(modal_window)
         modal_window.title('Справка')
-        modal_window.focus_set()
+        modal_window.grab_set()
         
         with open('performers/help.txt', encoding='utf-8') as file:
             text = file.read()
