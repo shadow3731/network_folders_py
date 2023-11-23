@@ -13,11 +13,12 @@ class MenuPerformer():
     """
     
     
-    def __init__(self, data_performer: DataPerformer):
+    def __init__(self, dp: DataPerformer, wp: WindowPerformer):
         """Initializes DataPerformer instance."""
         
         self.menu = None
-        self.dp = data_performer
+        self.dp = dp
+        self.wp = wp
         
     
     def show_menu(self, root: tk.Tk):
@@ -123,8 +124,8 @@ class MenuPerformer():
         
         modal_window = tk.Toplevel(root)
         
-        WindowPerformer().center_window(modal_window, 400, 120)
-        WindowPerformer().configure_window(modal_window)
+        self.wp.center_window(modal_window, 400, 120)
+        self.wp.configure_window(modal_window)
         modal_window.title('Изменить сетевые учетные данные')
         modal_window.grab_set()
         
@@ -249,8 +250,10 @@ class MenuPerformer():
             height=530    
         )
         
-        WindowPerformer().center_window(modal_window, 400, 530)
-        WindowPerformer().configure_window(modal_window)
+        self.wp.center_window(modal_window, 400, 530)
+        self.wp.configure_window(modal_window)
+        self.wp.unbind_scrolling()
+        
         modal_window.title('Справка')
         modal_window.grab_set()
         
@@ -305,3 +308,4 @@ class MenuPerformer():
         
     def _close_help(self, window: tk.Toplevel):
         window.destroy()
+        self.wp.bind_scrolling()

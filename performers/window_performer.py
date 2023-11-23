@@ -8,7 +8,7 @@ class WindowPerformer():
     """The class for a window handling."""
     
     def __init__(self):
-        pass
+        self.canvas: tk.Canvas = None
     
     def show_window(self, roots: dict, data: dict=None, groups_pos: list=None):
         """Shows main window.
@@ -95,6 +95,30 @@ class WindowPerformer():
         window.resizable(width=False, height=False)
         window.iconbitmap('')
         window.attributes('-toolwindow', 1)
+        
+    def bind_scrolling(self, canvas: tk.Canvas=None):
+        if self.canvas == None:
+            self.canvas = canvas
+        
+        self.canvas.bind_all(
+            '<MouseWheel>', 
+            lambda e, 
+                canvas=self.canvas: 
+                    self._on_mousewheel(e, canvas)
+        )
+        
+    def unbind_scrolling(self):
+        self.canvas.unbind_all('<MouseWheel>')
+        
+    def _on_mousewheel(self, event, canvas: tk.Canvas):
+        """Listens to the scroll event.
+        
+        Displays that part of the window, where a user scrolled to.
+        
+        Args:
+            canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects.
+        """
+        canvas.yview_scroll(-1*(event.delta // 120), 'units')
         
     def _congigure_roots(self, roots: dict, height: int):
         """Configures some attributes of root elements of the main window.

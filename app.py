@@ -20,7 +20,7 @@ class Application():
         bp (ButtonsPerformer): The ButtonsPerformer object for buttons control.
     """
     
-    def __init__(self, data_performer: DataPerformer):
+    def __init__(self, dp: DataPerformer):
         """Initializes Application instance.
         
         Args:
@@ -30,9 +30,9 @@ class Application():
         self.root = tk.Tk()
         self.cursor = Cursor()
         self.wp = WindowPerformer()
-        self.mp = MenuPerformer(data_performer)
+        self.mp = MenuPerformer(dp, self.wp)
         self.gp = GroupsPerformer(self.cursor)
-        self.bp = ButtonsPerformer(self.cursor, data_performer)
+        self.bp = ButtonsPerformer(self.cursor, dp)
         
     def start(self, a_data: dict):
         """Starts the sequence of operations to launch the application.
@@ -60,13 +60,7 @@ class Application():
             height=canvas.winfo_screenheight()
         )
         
-        canvas.bind_all(
-            '<MouseWheel>', 
-            lambda e, 
-                canvas=canvas,
-                frame=frame: 
-                    self._on_mousewheel(e, canvas, frame)
-        )
+        self.wp.bind_scrolling(canvas)
         
         root_elements = {
             'root': self.root,
@@ -152,16 +146,3 @@ class Application():
             Dialog().show_error(message)
             
             return False
-                
-    def _on_mousewheel(self, event, canvas: tk.Canvas, frame: tk.Frame):
-        """Listens to the scroll event.
-        
-        Displays that part of the window, where a user scrolled to.
-        
-        Args:
-            canvas (tk.Canvas): Canvas object of tkinter. Actually the object containing all the visible objects.
-        """
-        
-        print(event.widget)
-        if event.widget != :
-            canvas.yview_scroll(-1*(event.delta // 120), 'units')
