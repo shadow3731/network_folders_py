@@ -261,8 +261,9 @@ class MenuPerformer():
             func=lambda: self._on_close_help(modal_window)
         )
         
-        with open('performers/help.txt', encoding='utf-8') as file:
+        with open('network_folders_py/performers/help.txt', encoding='utf-8') as file:
             text = file.read()
+            print(text)
             
         upper_frame = tk.Frame(master=modal_window)
         upper_frame.pack(
