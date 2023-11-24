@@ -10,11 +10,12 @@ class MenuPerformer():
     Attributes:
         menu (optional): The toolbar menu object of tkinter.
         dp (DataPerformer): The DataPerformer object for handling the data.
+        wp (WindowPerformer): The WindowPerformer object for a window control.
     """
     
     
     def __init__(self, dp: DataPerformer, wp: WindowPerformer):
-        """Initializes DataPerformer instance."""
+        """Initializes DataPerformer and WindowPerformer instance."""
         
         self.menu = None
         self.dp = dp
@@ -69,7 +70,7 @@ class MenuPerformer():
         """Shows specififc options of certain inner menu element.
         
         Perfoms operations for opening built-in dialog window 
-        to find the file with appearance data.
+        to find the file with application data.
 
         Args:
             master_menu (tk.Menu): The inner menu element.
@@ -210,20 +211,19 @@ class MenuPerformer():
             
     def _import_file(self, key: str):
         """Opens the built-in filedialog to find the file 
-        with appearance data. If user found it, 
-        the application saves it."""
+        with data. If user found it, the application saves it."""
         
         filedir = Dialog().open_file_dialog()
         self._save_file_directory(key, filedir)
             
     def _save_file_directory(self, key: str, dir: str):
-        """Saves filedirecory of the appearnace data 
+        """Saves filedirecory of the application data 
         as a part of the service data.
         
         If the service data exists, performs this action.
 
         Args:
-            dir (str): The directory of the file with the appearance data.
+            dir (str): The directory of the file with the application data.
         """
         
         if dir:
@@ -235,6 +235,15 @@ class MenuPerformer():
                 self.dp.save_service_data(s_data)
                 
     def _show_help_menu(self, root: tk.Tk) -> tk.Menu:
+        """Shows inner menu of the main toolbar menu.
+
+        Args:
+            root (tk.Tk): The main toolbar menu element.
+
+        Returns:
+            tk.Menu: Inner toolbar menu element.
+        """
+        
         help_menu = tk.Menu(master=root, tearoff=0)
         help_menu.add_command(
             label='Справка',
@@ -244,6 +253,21 @@ class MenuPerformer():
         return help_menu
     
     def _show_help(self, root: tk.Menu):
+        """Shows the help window.
+        
+        Creates Toplevel dialog window with some elements 
+        for reading instructions about the application.
+        
+        Instructions are contained in a text file.
+        
+        Disables Scrollbar for the main window because of 
+        mutual scrolling. After closing the help window, 
+        enables Scrollbar for the main one.
+
+        Args:
+            root (tk.Menu): The toolbar menu element of tkinter.
+        """
+        
         modal_window = tk.Toplevel(
             master=root,
             width=400,
@@ -261,9 +285,9 @@ class MenuPerformer():
             func=lambda: self._on_close_help(modal_window)
         )
         
-        with open('network_folders_py/performers/help.txt', encoding='utf-8') as file:
-            text = file.read()
-            print(text)
+        text_file_relpath = 'network_folders_py/performers/help.txt'
+        with open(self.wp.get_content_path(text_file_relpath), encoding='utf-8') as f:
+            text = f.read()
             
         upper_frame = tk.Frame(master=modal_window)
         upper_frame.pack(
@@ -312,5 +336,14 @@ class MenuPerformer():
         modal_window.wait_window()
         
     def _on_close_help(self, window: tk.Toplevel):
+        """Handles events of closing the help window.
+        
+        Destroyes the help window and enables scrolling 
+        for the main window.
+        
+        Args:
+            window (tk.Toplevel): The help Toplevel window.
+        """
+        
         window.destroy()
         self.wp.bind_scrolling()

@@ -5,16 +5,19 @@ from converter import Converter
 def start(): 
     """Starts the application.
     
-    Creates DataPerformer() object and gets service and appearance data.
-    The service data is used for backend working of the application,
-    the appearance one is used for frontend working.
+    Creates DataPerformer() object and gets service and application data.
+    The service data is used for only backend working of the application,
+    the application one is used for both backend and frontend working.
     
-    The appearance data is taken from a JSON-file,
+    The application data is taken from a JSON-file,
     so it has only string-type values and might have unnecessary keys.
-    So that this data is being converting to suitable dictionary,
+    So that this data is being converted to a suitable dictionary,
     that optimizes working of the application.
-    After converting, the appearance data is used for visualizing
-    the application main window.
+    
+    After converting, the application data is used for visualizing
+    the application main window and for saving network credentials.
+    If credentials data are updatable, gets credentials from the 
+    application data and rewrites them to the service data.
     """
     
     dp = DataPerformer()

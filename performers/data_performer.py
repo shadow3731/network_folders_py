@@ -3,16 +3,17 @@ import os, json, pickle, re, subprocess, socket, threading
 from dialog import Dialog
 
 class DataPerformer():
-    """The class for manipulating with service and appearance data.
+    """The class for manipulating with service and application data.
     
     Attributes:
         documents_folder (str): the user's local documents folder.
-        service_file_name (str): the name of the file where service data is contained.
-        appearance_file_name (str): the name of the file where appearance data is contained.
-        a_data_key (str): the key of service data which contains the filepath to JSON appearance file.
-        username_cred_key (str): the key of service data which contains the username of network credentials.
-        password_cred_key (str): the key of service data which contains the password of network credentials.
-        server_comp_name (str | None): the computer name where the appearance data is taken from.
+        service_file_name (str): the name of the file where the service data is contained.
+        data_file_name (str): the name of the file where the application data is contained.
+        a_data_key (str): the key of the service data which contains the filepath to JSON application file.
+        creds_import_mode_key (str): the key representing if network credentials are imported from the application data.
+        username_cred_key (str): the key of the service data which contains the username of network credentials.
+        password_cred_key (str): the key of the service data which contains the password of network credentials.
+        server_comp_name (str | None): the computer name where the application data is taken from.
     """
     
     def __init__(self):
@@ -78,26 +79,26 @@ class DataPerformer():
                 pickle.dump(savable_data, f)
                 
     def load_data_from_server(self, filepath: str) -> dict:
-        """Loads the appearance data from a server.
+        """Loads the application data from a server.
         
         If the server is defined and is currently online,
-        connects to the filepath of the server, where the appearance data is.
-        If the filepath exists, reads the appearance data
+        connects to the filepath of the server, where the application data is.
+        If the filepath exists, reads the application data
         and saves it into the user's local Documents folder.
         
-        UTF-8-sig is used as a decoder of the appearance data,
-        because the file with the appearance data might have
+        UTF-8-sig is used as a decoder of the application data,
+        because the file with the application data might have
         unrecognized for regular UTF-8 decoder characters.
         
         If the file has invalid JSON syntaxis or unrecognized
         for UTF-8-sig decoder characters, creates 'askerror' window
-        with error description and tries to load the appearance data locally.
+        with error description and tries to load the application data locally.
         
         Args:
-            filepath (str): the filepath of the file with appearance data which is on the server computer.
+            filepath (str): the filepath of the file with application data which is on the server computer.
             
         Returns:
-            dict: The appearance data, if the file was found and was correctly read or tries to do it locally.
+            dict: The application data, if the file was found and was correctly read or tries to do it locally.
         """
         
         if self.server_comp_name and self._is_server_online(self.server_comp_name):
@@ -125,13 +126,13 @@ class DataPerformer():
         return self.load_data_locally()
         
     def load_data_locally(self) -> dict:
-        """Loads the appearance data from the user's local computer.
+        """Loads the application data from the user's local computer.
         
         If the user's Documents folder is defined, and the the path 
-        to the file with appearance data exists, reads it.
+        to the file with application data exists, reads it.
         
-        UTF-8-sig is used as a decoder of the appearance data,
-        because the file with the appearance data might have
+        UTF-8-sig is used as a decoder of the application data,
+        because the file with the application data might have
         unrecognized for regular UTF-8 decoder characters.
         
         If the file has invalid JSON syntaxis or unrecognized
@@ -139,7 +140,7 @@ class DataPerformer():
         with error description.
             
         Returns:
-            dict: The appearance data, if the file was found and was correctly read. 
+            dict: The application data, if the file was found and was correctly read. 
             None: If the user's Documents folder or filepath to the file does not exist, or if an error occured while reading the file.
         """
         
@@ -161,15 +162,15 @@ class DataPerformer():
         return None
     
     def save_appearance_data(self, savable_data: dict, filepath: str):
-        """Saves the appearance data.
+        """Saves the application data.
         
-        UTF-8-sig is used as an encoder of the appearance data,
-        because the savable appearance data might have
+        UTF-8-sig is used as an encoder of the application data,
+        because the savable application data might have
         unrecognized for regular UTF-8 encoder characters.
         
         Args:
-            savable_data (dict): the new or updated appearance data,
-            filepath (str): the path where the appearance data is needed to be saved.
+            savable_data (dict): the new or updated application data,
+            filepath (str): the path where the application data is needed to be saved.
         """
         
         with open(filepath, 'w', encoding='utf-8-sig') as f:
@@ -245,14 +246,14 @@ class DataPerformer():
         """Gets the server computer IP or name.
         
         Defines the server computer IP or name by the path
-        where the file with appearance data is.
+        where the file with the application data is.
         Separates the server name from the filepath by RegEx.
         
         Args:
-            filepath (str): the path to the file with appearance data.
+            filepath (str): the path to the file with the application data.
             
         Returns:
-            str:The server computer IP or name if defined.
+            str: The server computer IP or name if defined.
             None: If not.
         """
         

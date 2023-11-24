@@ -24,7 +24,7 @@ class Application():
         """Initializes Application instance.
         
         Args:
-            data_performer (DataPerformer): The DataPerformer object for service and appearance data control.
+            data_performer (DataPerformer): The DataPerformer object for service and application data control.
         """
         
         self.root = tk.Tk()
@@ -39,14 +39,14 @@ class Application():
         
         Firstly shows tool menu bar, then creates field for displaying
         groups and buttons with ceratain parameters.
-        If there is the appearance data, set initial Cursor values,
+        If there is the application data, set initial Cursor values,
         calculates positions of buttons and groups and displays them 
         (if they exists). After this configures main window parameters 
         and creates a scroll bar for scrolling the window
         if there are too much buttons. Then shows the main window to a user.
         
         Args:
-            a_data (dict): The appearance data.
+            a_data (dict): The application data.
         """
         
         self.mp.show_menu(self.root)
@@ -118,12 +118,12 @@ class Application():
     def _set_cursor_values(self, data: dict) -> bool:
         """Sets certain values for Cursor.
         
-        The values are taken from the appearance data.
+        The values are taken from the application data.
         If there is any invalid value, shows 'askerror' window 
         with error description.
         
         Args:
-            data (dict): The appearance data.
+            data (dict): The application data.
             
         Returns:
             bool (True): If all data are correctly set.

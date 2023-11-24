@@ -25,7 +25,7 @@ class ButtonsPerformer():
         """Configures a Button placement on the window.
         
         Creates an empty list, which may contain Buttons placement 
-        on the window divided with Groups. If the appearance data 
+        on the window divided with Groups. If the application data 
         has information about Groups and Buttons, 
         the list will be added with Buttons. For each group 
         extracts the information about Buttons. Refers to Cursor 
@@ -36,11 +36,11 @@ class ButtonsPerformer():
         no more Buttons and goes to the new Group if it exists.
         
         Args:
-            data (dict): The appearance data.
+            data (dict): The application data.
             
         Returns:
             list: Positions of all the buttons on the window. 
-            None: If there are no Groups or Buttons in the appearance data.
+            None: If there are no Groups or Buttons in the application data.
         """
         
         positions: list = []
@@ -81,11 +81,11 @@ class ButtonsPerformer():
         Before displayng, loads the service data for network credentials. 
         If there are Buttons, displays them on the screen at the positions, 
         given by the Cursor. A Button gets certain styles and is binded 
-        to open a certain directory. Binding starts working by clicking 
-        either left mouse button or Enter button.
+        to open a certain directory or file. Binding starts working by 
+        clicking either left mouse button or Enter button.
         
         Args:
-            data (dict): The appearance data,
+            data (dict): The application data,
             positions (list): The positions of all Buttons.
             root (tk.Frame): The root element where Buttons are displayed.
         """
@@ -153,7 +153,7 @@ class ButtonsPerformer():
         
         Args:
             button (tk.Button): The Button object of tkinter,
-            b_data (dict): The appearance data of this Button,
+            b_data (dict): The application data of this Button,
             s_data (dict): The service data.
         """
         

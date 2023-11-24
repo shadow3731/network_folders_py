@@ -5,7 +5,10 @@ import tkinter as tk
 from dialog import Dialog
 
 class WindowPerformer():
-    """The class for a window handling."""
+    """The class for a window handling.
+    
+    Attributes:
+        canvas (tk.Canvas): The Canvas element where all the visual data of the main window are displayed."""
     
     def __init__(self):
         self.canvas: tk.Canvas = None
@@ -16,17 +19,17 @@ class WindowPerformer():
         Sets title, icon, screen size options to the window.
         
         Gets values of width and height of the window from 
-        the appearance data. If there are no such values, 
+        the application data. If there are no such values, 
         sets the default ones.
 
         Args:
             roots (dict): Roots elements of the main window.
-            data (dict, optional): The appearance data. Defaults to None.
+            data (dict, optional): The application data. Defaults to None.
             groups_pos (list, optional): The positions of the Groups. Defaults to None.
         """
         
         roots['root'].title(data['app_name'])
-        roots['root'].iconbitmap(self._get_icon_path('network_folders_py/icon.ico'))
+        roots['root'].iconbitmap(self.get_content_path('network_folders_py/icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
@@ -97,6 +100,14 @@ class WindowPerformer():
         window.attributes('-toolwindow', 1)
         
     def bind_scrolling(self, canvas: tk.Canvas=None):
+        """Binds scrollig for a Canvas element.
+        
+        Also saves the Canvas element inside of this class, 
+        if it has not been saved before.
+        
+        Args:
+            canvas (tk.Canvas): The Canvas element where all the visual data of the main window are displayed."""
+        
         if self.canvas == None:
             self.canvas = canvas
         
@@ -108,7 +119,31 @@ class WindowPerformer():
         )
         
     def unbind_scrolling(self):
+        """Unbinds scrolling for a Canvas element."""
+        
         self.canvas.unbind_all('<MouseWheel>')
+        
+    def get_content_path(self, rel_path) -> str:
+        """Gets the directory of the application icon.
+        
+        Searches the icon inside of Temp folder, 
+        where the application was extracted. If there is no 
+        such a folder, searches it inside of the same directory 
+        as the executable file.
+        
+        Args:
+            rel_path (str): The relative path of the icon.
+            
+        Returns:
+            str: The directory of the icon.
+        """
+        
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath('.')
+            
+        return os.path.join(base_path, rel_path)
         
     def _on_mousewheel(self, event, canvas: tk.Canvas):
         """Listens to the scroll event.
@@ -130,25 +165,3 @@ class WindowPerformer():
         
         roots['frame'].config(height=height)
         roots['canvas'].config(height=height)
-        
-    def _get_icon_path(self, rel_path) -> str:
-        """Gets the directory of the applicatio icon.
-        
-        Searches the icon inside of Temp folder, 
-        where the application was extracted. If there is no 
-        such a folder, searches it inside of the same directory 
-        as the executable file.
-        
-        Args:
-            rel_path (str): The relative path of the icon.
-            
-        Returns:
-            str: The directory of the icon.
-        """
-        
-        try:
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath('.')
-            
-        return os.path.join(base_path, rel_path)

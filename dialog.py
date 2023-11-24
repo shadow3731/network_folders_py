@@ -23,10 +23,10 @@ class Dialog():
     
     def open_file_dialog(self) -> str:
         """Opens bult-in file dialog window 
-        to find a file with the appearance data.
+        to find a file with some data.
         
         Only JSON-files are suitable to open, 
-        because it is supposed that the appearance data 
+        because it is supposed that the data 
         must be contained in this type of files.
         
         If a user opened file of another type, 
@@ -36,7 +36,7 @@ class Dialog():
         is user's desktop.
         
         Returns:
-            str: File name of the JSON-file with the appearance data.
+            str: File name of the JSON-file with the data.
         """
         
         file = fd.askopenfile(

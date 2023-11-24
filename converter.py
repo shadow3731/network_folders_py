@@ -5,20 +5,20 @@ class Converter():
         pass
     
     def return_valid_dictionary(self, raw_data: dict) -> dict: 
-        """Returns correct dictionary of the appearance data.
+        """Returns correct dictionary of the application data.
         
-        Creates new appearance data based on the one taken from a file.
-        This new appearance data is a dictionary which has
+        Creates new application data based on the one taken from a file.
+        This new application data is a dictionary which has
         necessary keys and values with right types.
         
-        If there is no any necessary key in the raw appearance data,
-        puts a default value to the necessary key in the valid appearance data.
+        If there is no any necessary key in the raw application data,
+        puts a default value to the necessary key in the valid application data.
         
         Args:
-            raw_data (dict): The raw appearance data taken from a file.
+            raw_data (dict): The raw application data taken from a file.
             
         Returns:
-            dict: The valid appearance data with correct values and its types.
+            dict: The valid application data with correct values and its types.
         """
         
         if not raw_data:

@@ -44,7 +44,7 @@ class Cursor():
         its X-coordinate.
         
         Args:
-            button (dict): The appearance data of a button.
+            button (dict): The application data of a button.
             
         Returns:
             tuple: Positions of a button on the window.
