@@ -256,6 +256,10 @@ class MenuPerformer():
         
         modal_window.title('Справка')
         modal_window.grab_set()
+        modal_window.protocol(
+            name='WM_DELETE_WINDOW',
+            func=lambda: self._on_close_help(modal_window)
+        )
         
         with open('performers/help.txt', encoding='utf-8') as file:
             text = file.read()
@@ -298,7 +302,7 @@ class MenuPerformer():
             master=modal_window,
             width=10,
             text='Закрыть',
-            command=lambda: self._close_help(
+            command=lambda: self._on_close_help(
                 window=modal_window
             )
         )
@@ -306,6 +310,6 @@ class MenuPerformer():
         
         modal_window.wait_window()
         
-    def _close_help(self, window: tk.Toplevel):
+    def _on_close_help(self, window: tk.Toplevel):
         window.destroy()
         self.wp.bind_scrolling()
