@@ -21,7 +21,7 @@ class Dialog():
             message=message
         )
     
-    def open_file_dialog(self) -> str:
+    def open_file_dialog(self, title: str) -> str:
         """Opens bult-in file dialog window 
         to find a file with some data.
         
@@ -40,7 +40,7 @@ class Dialog():
         """
         
         file = fd.askopenfile(
-            title='Открыть файл визуализации',
+            title=title,
             initialdir=os.path.expanduser('~/Desktop'),
             defaultextension='.json',
             filetypes=[('JSON файлы', '*.json'), ('Все файлы', '*.*')]

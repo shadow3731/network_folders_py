@@ -213,7 +213,8 @@ class MenuPerformer():
         """Opens the built-in filedialog to find the file 
         with data. If user found it, the application saves it."""
         
-        filedir = Dialog().open_file_dialog()
+        title = 'Открыть файл конфигурации'
+        filedir = Dialog().open_file_dialog(title)
         self._save_file_directory(key, filedir)
             
     def _save_file_directory(self, key: str, dir: str):
