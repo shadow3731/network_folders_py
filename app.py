@@ -15,6 +15,7 @@ class Application():
     Attributes:
         root (tk.Tk): The root element of the application.
         cursor (Cursor): The Cursor object for placing object on the window.
+        dp (DataPerformer): The DataPerformer object for service and application data control.
         wp (WindowPerformer): The WindowPerformer object for a window control.
         mp (MenuPerformer): The MenuPerformer object for a tool menu control.
         gp (GroupsPerformer): The GroupsPerformer object for groups control.
@@ -22,11 +23,7 @@ class Application():
     """
     
     def __init__(self):
-        """Initializes Application instance.
-        
-        Args:
-            data_performer (DataPerformer): The DataPerformer object for service and application data control.
-        """
+        """Initializes Application instance."""
         
         self.root = None
         self.cursor = Cursor()
@@ -52,6 +49,9 @@ class Application():
         the application main window and for saving network credentials.
         If credentials data are updatable, gets credentials from the 
         application data and rewrites them to the service data.
+        
+        Args:
+            use_local_data (bool, optional): The flag defining if the application must use server or local application data. Defaults to False.
         """
 
         self.root = tk.Tk()
@@ -89,6 +89,12 @@ class Application():
             self._show(formatted_data)
             
     def restart(self, use_local_data: bool=False):
+        """Restarts this application by destroying all the elements.
+
+        Args:
+            use_local_data (bool, optional): The flag defining if the application must use server or local application data. Defaults to False.
+        """
+        
         self.root.destroy()
         self.start(use_local_data)
         
