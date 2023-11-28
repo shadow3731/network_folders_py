@@ -25,7 +25,7 @@ class Application():
     def __init__(self):
         """Initializes Application instance."""
         
-        self.root = None
+        self.root: tk.Tk = None
         self.cursor = Cursor()
         self.dp = DataPerformer()
         self.wp = WindowPerformer()
