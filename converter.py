@@ -1,10 +1,12 @@
+from dialog import Dialog
+
 class Converter():
     """The class for converting the appearance data taken from a file to the correct dictionary."""
     
     def __init__(self):
         pass
     
-    def return_valid_dictionary(self, raw_data: dict) -> dict: 
+    def return_valid_dictionary(self, raw_data: dict, return_null: bool=True) -> dict: 
         """Returns correct dictionary of the application data.
         
         Creates new application data based on the one taken from a file.
@@ -39,18 +41,22 @@ class Converter():
         
         data['window'] = {} if not raw_data.get('window') else raw_data['window']
         if raw_data.get('window'):
-            data['window']['width'] = 695 if not raw_data['window'].get('width') else int(raw_data['window']['width'])
-            data['window']['padding'] = 5 if not raw_data['window'].get('padding') else int(raw_data['window']['padding'])
-            data['window']['r_padding'] = 15 if not raw_data['window'].get('r_padding') else int(raw_data['window']['r_padding'])
-            data['window']['button_width'] = 90 if not raw_data['window'].get('button_width') else int(raw_data['window']['button_width'])
-            data['window']['button_height'] = 40 if not raw_data['window'].get('button_height') else int(raw_data['window']['button_height'])
-            
-        else:
-            data['window']['width'] = 695
-            data['window']['padding'] = 5
-            data['window']['r_padding'] = 15
-            data['window']['button_width'] = 90
-            data['window']['button_height'] = 40
+            try:
+                data['window']['width'] = 695 if not raw_data['window'].get('width') else int(raw_data['window']['width'])
+                data['window']['padding'] = 5 if not raw_data['window'].get('padding') else int(raw_data['window']['padding'])
+                data['window']['r_padding'] = 15 if not raw_data['window'].get('r_padding') else int(raw_data['window']['r_padding'])
+                data['window']['button_width'] = 90 if not raw_data['window'].get('button_width') else int(raw_data['window']['button_width'])
+                data['window']['button_height'] = 40 if not raw_data['window'].get('button_height') else int(raw_data['window']['button_height'])
+            except ValueError as e:
+                if return_null:
+                    self._redirect_error(e)
+                    return None
+                else:
+                    data['window']['width'] = 695
+                    data['window']['padding'] = 5
+                    data['window']['r_padding'] = 15
+                    data['window']['button_width'] = 90
+                    data['window']['button_height'] = 40
         
         if raw_data.get('groups'):
             data['groups'] = {}
@@ -68,7 +74,16 @@ class Converter():
                             data['groups'][f'group{i}']['buttons'][f'button{j}'] = {}
                             data['groups'][f'group{i}']['buttons'][f'button{j}']['name'] = f'Button {j}' if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('name') else raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['name']
                             data['groups'][f'group{i}']['buttons'][f'button{j}']['path'] = '' if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('path') else raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['path']
-                            data['groups'][f'group{i}']['buttons'][f'button{j}']['size'] = 1 if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('size') else int(raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['size'])
+                            
+                            try:
+                                data['groups'][f'group{i}']['buttons'][f'button{j}']['size'] = 1 if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('size') else int(raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['size'])
+                            except ValueError as e:
+                                if return_null:
+                                    self._redirect_error(e)
+                                    return None
+                                else:
+                                    data['groups'][f'group{i}']['buttons'][f'button{j}']['size'] = 1
+                            
                             data['groups'][f'group{i}']['buttons'][f'button{j}']['bg_color'] = 'white' if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('bg_color') else raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['bg_color']
                             data['groups'][f'group{i}']['buttons'][f'button{j}']['fg_color'] = 'black' if not raw_data['groups'][f'group{i}']['buttons'][f'button{j}'].get('fg_color') else raw_data['groups'][f'group{i}']['buttons'][f'button{j}']['fg_color']
                             
@@ -83,3 +98,13 @@ class Converter():
                     break
             
         return data
+    
+    def _redirect_error(self, e: ValueError):
+        """Redirects error message and description to show them to the user.
+
+        Args:
+            e (ValueError): Error description.
+        """
+        
+        message = f"Обнаружено недопустимое значение параметров в файле конфигурации. Будут выгружены значения из локального файла конфигурации.\n\n{e}"
+        Dialog().show_error(message)

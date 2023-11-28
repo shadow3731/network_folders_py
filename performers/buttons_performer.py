@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 
-import re, subprocess, platform, threading
+import re, subprocess, platform, threading, _tkinter
 
 from cursor import Cursor
 from dialog import Dialog
@@ -102,15 +102,19 @@ class ButtonsPerformer():
             for j in range(len(positions[i])):
                 button_data = group_data['buttons'][f'button{j+1}']
                 
-                button = tk.Button(
-                    master=root,
-                    text=button_data['name'],
-                    font=Font(family='Calibri', size=11, weight='bold'),
-                    relief=tk.SOLID,
-                    borderwidth=1,
-                    bg=button_data['bg_color'],
-                    fg=button_data['fg_color']
-                )
+                try:
+                    button = tk.Button(
+                        master=root,
+                        text=button_data['name'],
+                        font=Font(family='Calibri', size=11, weight='bold'),
+                        relief=tk.SOLID,
+                        borderwidth=1,
+                        bg=button_data['bg_color'],
+                        fg=button_data['fg_color']
+                    )
+                except _tkinter.TclError as e:
+                    message = f"Обнаружен недопустимый параметр для кнопки.\n\n{e}"
+                    Dialog().show_error(message)  
                 
                 button.bind(
                     '<Button-1>', 

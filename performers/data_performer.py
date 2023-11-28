@@ -84,7 +84,7 @@ class DataPerformer():
         If the server is defined and is currently online,
         connects to the filepath of the server, where the application data is.
         If the filepath exists, reads the application data
-        and saves it into the user's local Documents folder.
+        and returns it.
         
         UTF-8-sig is used as a decoder of the application data,
         because the file with the application data might have
@@ -105,12 +105,7 @@ class DataPerformer():
             if os.path.exists(filepath):
                 try:
                     with open(filepath, encoding='utf-8-sig') as f:
-                        data = json.load(f)
-                        
-                        local_filepath = f'{self.documents_folder}/{self.data_file_name}'
-                        self.save_appearance_data(data, local_filepath)
-                        
-                        return data
+                        return json.load(f)
                     
                 except (json.JSONDecodeError, UnicodeDecodeError) as e:
                     message = f'Не удалось выгрузить данные из файла конфигурации, находящегося на сервере.\n\n{e}'

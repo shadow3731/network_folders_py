@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from cursor import Cursor
+from converter import Converter
 from dialog import Dialog
 from performers.window_performer import WindowPerformer
 from performers.menu_performer import MenuPerformer
@@ -20,22 +21,79 @@ class Application():
         bp (ButtonsPerformer): The ButtonsPerformer object for buttons control.
     """
     
-    def __init__(self, dp: DataPerformer):
+    def __init__(self):
         """Initializes Application instance.
         
         Args:
             data_performer (DataPerformer): The DataPerformer object for service and application data control.
         """
         
-        self.root = tk.Tk()
+        self.root = None
         self.cursor = Cursor()
+        self.dp = DataPerformer()
         self.wp = WindowPerformer()
-        self.mp = MenuPerformer(dp, self.wp)
+        self.mp = MenuPerformer(self.dp, self.wp)
         self.gp = GroupsPerformer(self.cursor)
-        self.bp = ButtonsPerformer(self.cursor, dp)
+        self.bp = ButtonsPerformer(self.cursor, self.dp)
         
-    def start(self, a_data: dict):
-        """Starts the sequence of operations to launch the application.
+    def start(self, use_local_data: bool=False):
+        """Starts the application.
+    
+        Creates DataPerformer() object and gets service and application data.
+        The service data is used for only backend working of the application,
+        the application one is used for both backend and frontend working.
+        
+        The application data is taken from a JSON-file,
+        so it has only string-type values and might have unnecessary keys.
+        So that this data is being converted to a suitable dictionary,
+        that optimizes working of the application.
+        
+        After converting, the application data is used for visualizing
+        the application main window and for saving network credentials.
+        If credentials data are updatable, gets credentials from the 
+        application data and rewrites them to the service data.
+        """
+
+        self.root = tk.Tk()
+        self.root.iconify()
+    
+        s_data = self.dp.load_service_data()
+        if s_data:
+            if not use_local_data:
+                raw_data = self.dp.load_data_from_server(s_data[self.dp.a_data_key])
+                formatted_data = Converter().return_valid_dictionary(raw_data)
+                
+                if formatted_data == None:
+                    self.restart(True)
+                else:
+                    local_path = f'{self.dp.documents_folder}/{self.dp.data_file_name}'
+                    self.dp.save_appearance_data(
+                        savable_data=formatted_data,
+                        filepath=local_path
+                    )
+                    
+            else:
+                raw_data = self.dp.load_data_locally()
+                formatted_data = Converter().return_valid_dictionary(
+                    raw_data=raw_data,
+                    return_null=False
+                )
+            
+            if s_data[self.dp.creds_import_mode_key] == 'True':
+                if formatted_data['credentials']:
+                    s_data[self.dp.username_cred_key] = formatted_data['credentials']['username']
+                    s_data[self.dp.password_cred_key] = formatted_data['credentials']['password']
+
+                    self.dp.save_service_data(s_data)
+                      
+            self._show(formatted_data)
+            
+    def restart(self, use_local_data: bool=False):
+        self.root.destroy()
+        self.start(use_local_data)
+        
+    def _show(self, a_data: dict):
+        """Starts the sequence of operations to show all application elements.
         
         Firstly shows tool menu bar, then creates field for displaying
         groups and buttons with ceratain parameters.
@@ -48,6 +106,8 @@ class Application():
         Args:
             a_data (dict): The application data.
         """
+        
+        self.root.deiconify()
         
         self.mp.show_menu(self.root)
         
