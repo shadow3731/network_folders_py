@@ -94,11 +94,11 @@ https://github.com/shadow3731/network_folders_py
             "name": "Group 2",
             "buttons": {
                 "button1": {
-		            "name": "Button 3",
+                    "name": "Button 3",
                     "path": "\\\\comp1\\wordpad.exe",
                     "size": "2",
                     "fg_color": "blue"
-		        }
+                }
             }
         },
         "group3": {

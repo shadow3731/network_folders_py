@@ -286,7 +286,7 @@ class MenuPerformer():
             func=lambda: self._on_close_help(modal_window)
         )
         
-        text_file_relpath = 'network_folders_py/performers/help.txt'
+        text_file_relpath = 'network_folders_py\\performers\\help.txt'
         with open(self.wp.get_content_path(text_file_relpath), encoding='utf-8') as f:
             text = f.read()
             
