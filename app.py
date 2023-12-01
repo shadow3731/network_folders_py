@@ -82,14 +82,15 @@ class Application():
                     return_null=False
                 )
             
-            if s_data[self.dp.creds_import_mode_key] == 'True':
-                if formatted_data['credentials']:
-                    s_data[self.dp.username_cred_key] = formatted_data['credentials']['username']
-                    s_data[self.dp.password_cred_key] = formatted_data['credentials']['password']
+            if formatted_data:
+                if s_data[self.dp.creds_import_mode_key] == 'True':
+                    if formatted_data['credentials']:
+                        s_data[self.dp.username_cred_key] = formatted_data['credentials']['username']
+                        s_data[self.dp.password_cred_key] = formatted_data['credentials']['password']
 
-                    self.dp.save_service_data(s_data)
+                        self.dp.save_service_data(s_data)
                  
-            self._show(formatted_data)
+                self._show(formatted_data)
             
     def restart(self, use_local_data: bool=False):
         """Restarts this application by destroying all the elements.
