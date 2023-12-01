@@ -63,17 +63,24 @@ class Application():
                 raw_data = self.dp.load_data_from_server(s_data[self.dp.a_data_key])
                 if not raw_data:
                     self.restart(True)
-                
-                formatted_data = Converter().return_valid_dictionary(raw_data)
-                
-                if not formatted_data:
-                    self.restart(True)
                 else:
-                    local_path = f'{self.dp.documents_folder}\\{self.dp.data_file_name}'
-                    self.dp.save_appearance_data(
-                        savable_data=formatted_data,
-                        filepath=local_path
-                    )
+                    formatted_data = Converter().return_valid_dictionary(raw_data)
+                    
+                    if not formatted_data:
+                        self.restart(True)
+                    else:
+                        local_path = f'{self.dp.documents_folder}\\{self.dp.data_file_name}'
+                        self.dp.save_appearance_data(
+                            savable_data=formatted_data,
+                            filepath=local_path
+                        )
+                        
+                        self._import_credentials(
+                            s_data=s_data,
+                            a_data=formatted_data
+                        )
+                        
+                        self._show(formatted_data)
                     
             else:
                 raw_data = self.dp.load_data_locally()
@@ -81,14 +88,6 @@ class Application():
                     raw_data=raw_data,
                     return_null=False
                 )
-            
-            if formatted_data:
-                if s_data[self.dp.creds_import_mode_key] == 'True':
-                    if formatted_data['credentials']:
-                        s_data[self.dp.username_cred_key] = formatted_data['credentials']['username']
-                        s_data[self.dp.password_cred_key] = formatted_data['credentials']['password']
-
-                        self.dp.save_service_data(s_data)
                  
                 self._show(formatted_data)
             
@@ -216,3 +215,20 @@ class Application():
             Dialog().show_error(message)
             
             return False
+        
+    def _import_credentials(self, s_data: dict, a_data: dict):
+        """Imports network credentials to the service data 
+        if the value of a specific parameter in this data 
+        allows it.
+
+        Args:
+            s_data (dict): The service data.
+            a_data (dict): The application data.
+        """
+        
+        if s_data[self.dp.creds_import_mode_key] == 'True':
+            if a_data.get('credentials'):
+                s_data[self.dp.username_cred_key] = a_data['credentials']['username']
+                s_data[self.dp.password_cred_key] = a_data['credentials']['password']
+
+                self.dp.save_service_data(s_data)
