@@ -18,6 +18,7 @@ class Converter():
         
         Args:
             raw_data (dict): The raw application data taken from a file.
+            return_null (bool, optional): Defines wether return None or make a dictionary with default values. Defaults to True.
             
         Returns:
             dict: The valid application data with correct values and its types.
@@ -36,8 +37,10 @@ class Converter():
             data['credentials']['password'] = '' if not raw_data['credentials'].get('password') else raw_data['credentials']['password']
         
         else:
-            data['credentials']['username'] = ''
-            data['credentials']['password'] = ''
+            self._put_defaults(
+                data=data, 
+                flag='credentials'
+            )
         
         data['window'] = {} if not raw_data.get('window') else raw_data['window']
         if raw_data.get('window'):
@@ -52,11 +55,16 @@ class Converter():
                     self._redirect_error(e)
                     return None
                 else:
-                    data['window']['width'] = 695
-                    data['window']['padding'] = 5
-                    data['window']['r_padding'] = 15
-                    data['window']['button_width'] = 90
-                    data['window']['button_height'] = 40
+                    self._put_defaults(
+                        data=data, 
+                        flag='window'
+                    )
+        
+        else:
+            self._put_defaults(
+                data=data, 
+                flag='window'
+            )
         
         if raw_data.get('groups'):
             data['groups'] = {}
@@ -108,3 +116,22 @@ class Converter():
         
         message = f"Обнаружено недопустимое значение параметров в файле конфигурации. Будут выгружены значения из локального файла конфигурации.\n\n{e}"
         Dialog().show_error(message)
+        
+    def _put_defaults(self, data: dict, flag: str):
+        """Puts some deafault values to the application data.
+
+        Args:
+            data (dict): The application data.
+            flag (str): The group of parameters that need to set default values into.
+        """
+        
+        if flag == 'credentials':
+            data['credentials']['username'] = ''
+            data['credentials']['password'] = ''
+            
+        elif flag == 'window':
+            data['window']['width'] = 695
+            data['window']['padding'] = 5
+            data['window']['r_padding'] = 15
+            data['window']['button_width'] = 90
+            data['window']['button_height'] = 40

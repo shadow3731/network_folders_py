@@ -61,12 +61,15 @@ class Application():
         if s_data:
             if not use_local_data:
                 raw_data = self.dp.load_data_from_server(s_data[self.dp.a_data_key])
+                if not raw_data:
+                    self.restart(True)
+                
                 formatted_data = Converter().return_valid_dictionary(raw_data)
                 
-                if formatted_data == None:
+                if not formatted_data:
                     self.restart(True)
                 else:
-                    local_path = f'{self.dp.documents_folder}/{self.dp.data_file_name}'
+                    local_path = f'{self.dp.documents_folder}\\{self.dp.data_file_name}'
                     self.dp.save_appearance_data(
                         savable_data=formatted_data,
                         filepath=local_path
@@ -85,7 +88,7 @@ class Application():
                     s_data[self.dp.password_cred_key] = formatted_data['credentials']['password']
 
                     self.dp.save_service_data(s_data)
-                      
+                 
             self._show(formatted_data)
             
     def restart(self, use_local_data: bool=False):

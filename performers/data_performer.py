@@ -140,7 +140,7 @@ class DataPerformer():
         """
         
         if self.documents_folder:
-            local_filepath = f'{self.documents_folder}/{self.data_file_name}'
+            local_filepath = f'{self.documents_folder}\\{self.data_file_name}'
             if os.path.exists(local_filepath):
                 try:
                     with open(local_filepath, encoding='utf-8-sig') as f:
