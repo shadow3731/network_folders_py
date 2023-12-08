@@ -248,12 +248,24 @@ class MenuPerformer():
         help_menu = tk.Menu(master=root, tearoff=0)
         help_menu.add_command(
             label='Справка',
-            command=lambda: self._show_help(help_menu)
+            command=lambda: self._show_help(
+                root=help_menu,
+                title='Справка',
+                filepath='help.txt'
+            )
+        )
+        help_menu.add_command(
+            label='Описание обновлений',
+            command=lambda: self._show_help(
+                root=help_menu,
+                title='Описание обновлений',
+                filepath='updates.txt'
+            )
         )
         
         return help_menu
     
-    def _show_help(self, root: tk.Menu):
+    def _show_help(self, root: tk.Menu, title: str, filepath: str):
         """Shows the help window.
         
         Creates Toplevel dialog window with some elements 
@@ -279,14 +291,14 @@ class MenuPerformer():
         self.wp.configure_window(modal_window)
         self.wp.unbind_scrolling()
         
-        modal_window.title('Справка')
+        modal_window.title(title)
         modal_window.grab_set()
         modal_window.protocol(
             name='WM_DELETE_WINDOW',
             func=lambda: self._on_close_help(modal_window)
         )
         
-        text_file_relpath = 'network_folders_py\\performers\\help.txt'
+        text_file_relpath = f'network_folders_py\\performers\\content\\{filepath}'
         with open(self.wp.get_content_path(text_file_relpath), encoding='utf-8') as f:
             text = f.read()
             

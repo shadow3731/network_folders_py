@@ -216,14 +216,13 @@ class ButtonsPerformer():
                         dir,
                         stdout=subprocess.PIPE, 
                         stderr=subprocess.PIPE,
-                        startupinfo=startup_info
+                        timeout=timeout
                     )
-                        
+                            
                     if file_cmd_res.returncode != 0:
                         self._show_error(command_result=file_cmd_res)
                     
                 else:
-                
                     map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
                     map_cmd_res = subprocess.run(
                         map_cmd, 
@@ -343,5 +342,6 @@ class ButtonsPerformer():
             bool (False): If the direcory is a folder.
         """
         
-        file_extension_pattern = r'\.(?:exe|txt|json|csv|jpg|jpeg|png|pdf|doc|docx|xls|xlsx|bat|mp3|mp4|avi|wav|wmv|mkv)$'
-        return re.search(file_extension_pattern, path, re.IGNORECASE) is not None
+        file_types = ['.exe', '.txt', '.json', '.csv', '.jpg', '.jpeg', '.png', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.xlsm', '.bat', '.mp3', '.mp4', '.avi', '.wav', '.wmv', '.mkv']
+        pattern = fr'\b(?:{"|".join(re.escape(ft) for ft in file_types)})\b'
+        return bool(re.search(pattern, path))
