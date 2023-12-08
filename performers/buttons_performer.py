@@ -3,6 +3,8 @@ from tkinter.font import Font
 
 import re, subprocess, platform, threading, _tkinter
 
+from typing import Match
+
 from cursor import Cursor
 from dialog import Dialog
 from performers.data_performer import DataPerformer
@@ -188,11 +190,8 @@ class ButtonsPerformer():
         
         Defines the user's operation system and if this OS is not 
         specific, tries to open the directory within a certain time.
-        On Windows OS prevents to show Command Window and defines 
-        if the directory is a program or a folder. If it is 
-        the program, just opens it, if it is the folder, 
-        tries to open it using network credentials and if opened, 
-        deletes the connection with this network folder. 
+        Tries to open directory using network credentials and if opened, 
+        deletes the connection with this network directory. 
         If some operaion failed, shows 'askerror' window with 
         description of the error.
         
@@ -206,57 +205,39 @@ class ButtonsPerformer():
         timeout = 10.0
         
         if platform.system() == 'Windows':
-            startup_info = subprocess.STARTUPINFO()
-            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            startup_info.wShowWindow = subprocess.SW_HIDE
-            
             try:
-                if self._is_file(dir):
-                    file_cmd_res = subprocess.run(
-                        dir,
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE,
-                        timeout=timeout
-                    )
-                            
-                    if file_cmd_res.returncode != 0:
-                        self._show_error(command_result=file_cmd_res)
-                    
-                else:
-                    map_cmd = f'net use "{dir}" /user:"{creds["username"]}" "{creds["password"]}"'
-                    map_cmd_res = subprocess.run(
-                        map_cmd, 
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE,
-                        startupinfo=startup_info,
-                        timeout=timeout
+                network_device = self._get_network_device_name(dir)
+                if network_device:
+                    map_cmd_res = self._run_command(
+                        cmd=f'net use "{network_device}" /user:"{creds["username"]}" "{creds["password"]}"',
+                        timeout=timeout,
+                        hide_cmd_window=True
                     )
                     
                     if map_cmd_res.returncode == 0:
-                        dir_cmd = f'explorer "{dir}"'
-                        dir_cmd_res = subprocess.run(
-                            dir_cmd, 
-                            stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE,
+                        self._define_dir_type(
+                            cmd=dir,
                             timeout=timeout
                         )
                         
-                        if dir_cmd_res.returncode == 0 or dir_cmd_res.returncode == 1:
-                            disconn_cmd = f'net use "{dir}" /delete'
-                            subprocess.run(
-                                disconn_cmd, 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE,
-                                startupinfo=startup_info,
-                                timeout=timeout
-                            )
+                        del_cmd_res = self._run_command(
+                            cmd=f'net use "{network_device}" /delete',
+                            timeout=timeout,
+                            hide_cmd_window=True
+                        )
+                        
+                        if del_cmd_res.returncode != 0:
+                            self._show_error(command_result=del_cmd_res)
                             
-                        else:
-                            self._show_error(command_result=dir_cmd_res)
-                        
                     else:
-                        self._show_error(command_result=map_cmd_res)
+                        self._show_error(command_result=map_cmd_res)  
                         
+                else:
+                    self._define_dir_type(
+                        cmd=dir,
+                        timeout=timeout
+                    )
+                    
             except subprocess.CalledProcessError as e:
                 self._show_error(command_result=e)
             except subprocess.TimeoutExpired as e:
@@ -345,3 +326,80 @@ class ButtonsPerformer():
         file_types = ['.exe', '.txt', '.json', '.csv', '.jpg', '.jpeg', '.png', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.xlsm', '.bat', '.mp3', '.mp4', '.avi', '.wav', '.wmv', '.mkv']
         pattern = fr'\b(?:{"|".join(re.escape(ft) for ft in file_types)})\b'
         return bool(re.search(pattern, path))
+    
+    def _get_network_device_name(self, dir: str) -> (str | None):
+        """Gets name of the network device (using RegEx) 
+        which the user connects to.
+
+        Args:
+            dir (str): Network directory which might have the network device name.
+
+        Returns:
+            str: If it is able to extract the network device name.
+            None: If not.
+        """
+        
+        matches: (Match[str] | None) = re.match(r'\\\\([^\\]+)', dir)
+        return f'\\\\{matches.group(1)}' if matches else None
+    
+    def _define_dir_type(self, cmd: str, timeout: float):
+        """Defines directory type to open it next.
+        
+        Uses different commands for opening a directory 
+        which contains either a file or a folder.
+
+        Args:
+            cmd (str): The network directory.
+            timeout (float): Quanity of seconds of the possibility to open the directory.
+        """
+        
+        if self._is_file(cmd):
+            file_cmd_res = self._run_command(
+                cmd=cmd,
+                timeout=timeout
+            )
+                            
+            if file_cmd_res.returncode != 0:
+                self._show_error(command_result=file_cmd_res)
+                                
+        else:
+            dir_cmd_res = self._run_command(
+                cmd=f'explorer "{cmd}"',
+                timeout=timeout
+            )
+                            
+            if dir_cmd_res.returncode != 0 and dir_cmd_res.returncode != 1:
+                self._show_error(command_result=dir_cmd_res)
+    
+    def _run_command(self, cmd: str, timeout: float, hide_cmd_window: bool=False) -> subprocess.CompletedProcess[bytes]:
+        """Runs a command to open directory.
+
+        Args:
+            cmd (str): The command which the application opens directory with.
+            timeout (float): Quanity of seconds of the possibility to open the directory.
+            hide_cmd_window (bool, optional): Defines if the CMD window must be hidden while running the command. Defaults to False.
+
+        Returns:
+            subprocess.CompletedProcess[bytes]: The metadata of completed command.
+        """
+        
+        if hide_cmd_window:
+            startup_info = subprocess.STARTUPINFO()
+            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup_info.wShowWindow = subprocess.SW_HIDE
+            
+            return subprocess.run(
+                args=cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE,
+                startupinfo=startup_info,
+                timeout=timeout
+            )
+            
+        else:
+            return subprocess.run(
+                args=cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE,
+                timeout=timeout
+            )
