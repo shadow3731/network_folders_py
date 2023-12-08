@@ -327,7 +327,7 @@ class ButtonsPerformer():
         pattern = fr'\b(?:{"|".join(re.escape(ft) for ft in file_types)})\b'
         return bool(re.search(pattern, path))
     
-    def _get_network_device_name(self, dir: str) -> (str | None):
+    def _get_network_device_name(self, dir: str) -> str:
         """Gets name of the network device (using RegEx) 
         which the user connects to.
 
