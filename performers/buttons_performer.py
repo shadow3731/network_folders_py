@@ -354,10 +354,7 @@ class ButtonsPerformer():
         """
         
         if self._is_file(cmd):
-            file_cmd_res = self._run_command(
-                cmd=cmd,
-                timeout=timeout
-            )
+            file_cmd_res = self._run_command(cmd)
                             
             if file_cmd_res.returncode != 0:
                 self._show_error(command_result=file_cmd_res)
@@ -371,12 +368,12 @@ class ButtonsPerformer():
             if dir_cmd_res.returncode != 0 and dir_cmd_res.returncode != 1:
                 self._show_error(command_result=dir_cmd_res)
     
-    def _run_command(self, cmd: str, timeout: float, hide_cmd_window: bool=False):
+    def _run_command(self, cmd: str, timeout: float=0.0, hide_cmd_window: bool=False):
         """Runs a command to open directory.
 
         Args:
             cmd (str): The command which the application opens directory with.
-            timeout (float): Quanity of seconds of the possibility to open the directory.
+            timeout (float): Quanity of seconds of the possibility to open the directory. If timeout is 0 s, tries to open directory without any timeout. Defaults to 0.0
             hide_cmd_window (bool, optional): Defines if the CMD window must be hidden while running the command. Defaults to False.
 
         Returns:
@@ -388,18 +385,34 @@ class ButtonsPerformer():
             startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startup_info.wShowWindow = subprocess.SW_HIDE
             
-            return subprocess.run(
-                args=cmd, 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE,
-                startupinfo=startup_info,
-                timeout=timeout
-            )
+            if timeout == 0.0:
+                return subprocess.Popen(
+                    args=cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    startupinfo=startup_info
+                )
+            else:
+                return subprocess.run(
+                    args=cmd, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    startupinfo=startup_info,
+                    timeout=timeout
+                )
             
         else:
-            return subprocess.run(
-                args=cmd, 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE,
-                timeout=timeout
-            )
+            if timeout == 0.0:
+                return subprocess.run(
+                    args=cmd, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE
+                )
+                
+            else:
+                return subprocess.run(
+                    args=cmd, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    timeout=timeout
+                )
