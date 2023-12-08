@@ -339,7 +339,7 @@ class ButtonsPerformer():
             None: If not.
         """
         
-        matches: (Match[str] | None) = re.match(r'\\\\([^\\]+)', dir)
+        matches = re.match(r'\\\\([^\\]+)', dir)
         return f'\\\\{matches.group(1)}' if matches else None
     
     def _define_dir_type(self, cmd: str, timeout: float):
