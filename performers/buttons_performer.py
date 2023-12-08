@@ -371,7 +371,7 @@ class ButtonsPerformer():
             if dir_cmd_res.returncode != 0 and dir_cmd_res.returncode != 1:
                 self._show_error(command_result=dir_cmd_res)
     
-    def _run_command(self, cmd: str, timeout: float, hide_cmd_window: bool=False) -> subprocess.CompletedProcess[bytes]:
+    def _run_command(self, cmd: str, timeout: float, hide_cmd_window: bool=False):
         """Runs a command to open directory.
 
         Args:
