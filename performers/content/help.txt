@@ -229,5 +229,5 @@ bg_color и fg_color прописывать необязательно,
 настраивать программу.
 
 
-Network Folders v. 1.0
+Network Folders v. 1.1
 © 2023. Made by Vladislav Klimenok
