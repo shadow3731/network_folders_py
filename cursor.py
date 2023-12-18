@@ -52,14 +52,26 @@ class Cursor():
         
         if self.x + button['size']*self.width > self.screen_width - self.padding - self.right_padding:
             self.x = self.padding
-            self.y += self.height - self.padding
+            self.y += self.height + 2*self.padding
             
         button_positions: tuple = (
             self.x + self.padding,
-            self.y + 4*self.padding,
+            self.y + 20,
             button['size']*self.width + (button['size']-1)*self.padding,
-            self.height - 2*self.padding
+            self.height + self.padding
         )
+        
+        
+        # if self.x + button['size']*self.width > self.screen_width - self.padding - self.right_padding:
+        #     self.x = self.padding
+        #     self.y += self.height - self.padding
+            
+        # button_positions: tuple = (
+        #     self.x + self.padding,
+        #     self.y + 4*self.padding,
+        #     button['size']*self.width + (button['size']-1)*self.padding,
+        #     self.height - 2*self.padding
+        # )
         
         self.x += button['size']*self.width + button['size']*self.padding
             
@@ -86,15 +98,30 @@ class Cursor():
             self.x,
             self.y,
             self.screen_width - 2*self.padding - self.right_padding,
-            lower_y + self.padding - self.y
+            lower_y + 2*self.padding - self.y
         )
         
-        self.y = lower_y + self.padding
+        self.y = lower_y + self.padding/2
+        
+        
+        
+        # group_positions: tuple = (
+        #     self.x,
+        #     self.y,
+        #     self.screen_width - 2*self.padding - self.right_padding,
+        #     lower_y + self.padding - self.y
+        # )
+        
+        # self.y = lower_y + self.padding
         
         return group_positions
     
     def move_to_new_group(self):
         """Moves Cursor to new position."""
-        
+       
         self.x = self.padding
-        self.y += self.height + 3*self.padding
+        self.y += self.height + self.padding/2 + 20
+       
+        
+        # self.x = self.padding
+        # self.y += self.height + 3*self.padding

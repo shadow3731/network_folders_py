@@ -29,7 +29,7 @@ class WindowPerformer():
         """
         
         roots['root'].title(data['app_name'])
-        roots['root'].iconbitmap(self.get_content_path('network_folders_py/icon.ico'))
+        roots['root'].iconbitmap(self.get_content_path('icon.ico'))
         roots['root'].resizable(width=False, height=False)
         
         window_width = 500
@@ -123,7 +123,7 @@ class WindowPerformer():
         
         self.canvas.unbind_all('<MouseWheel>')
         
-    def get_content_path(self, rel_path) -> str:
+    def get_content_path(self, rel_path: str) -> str:
         """Gets the directory of the application icon.
         
         Searches the icon inside of Temp folder, 
@@ -139,7 +139,7 @@ class WindowPerformer():
         """
         
         try:
-            base_path = sys._MEIPASS
+            base_path = f'{sys._MEIPASS}\\network_folders\\'
         except Exception:
             base_path = os.path.abspath('.')
             
