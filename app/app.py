@@ -1,5 +1,6 @@
 import tkinter as tk
 
+from app.frame_controller import Frame_Controller
 from cursor import Cursor
 from converter import Converter
 from dialog import Dialog
@@ -25,7 +26,7 @@ class Application():
     def __init__(self):
         """Initializes Application instance."""
         
-        self.root: tk.Tk = None
+        self.fc = Frame_Controller()
         self.cursor = Cursor()
         self.dp = DataPerformer()
         self.wp = WindowPerformer()
@@ -54,8 +55,8 @@ class Application():
             use_local_data (bool, optional): The flag defining if the application must use server or local application data. Defaults to False.
         """
 
-        self.root = tk.Tk()
-        self.root.iconify()
+        self.fc.create_root()
+        self.fc.root.iconify()
     
         s_data = self.dp.load_service_data()
         if s_data:
@@ -98,7 +99,7 @@ class Application():
             use_local_data (bool, optional): The flag defining if the application must use server or local application data. Defaults to False.
         """
         
-        self.root.destroy()
+        self.fc.destroy_root()
         self.start(use_local_data)
         
     def _show(self, a_data: dict):
@@ -116,11 +117,11 @@ class Application():
             a_data (dict): The application data.
         """
         
-        self.root.deiconify()
+        self.fc.root.deiconify()
         
-        self.mp.show_menu(self.root)
+        self.mp.show_menu(self.fc.root)
         
-        canvas = tk.Canvas(master=self.root)
+        canvas = tk.Canvas(master=self.fc.root)
         canvas.place(x=0, y=-5, relwidth=1, relheight=1)
         
         frame = tk.Frame(
@@ -132,7 +133,7 @@ class Application():
         self.wp.bind_scrolling(canvas)
         
         root_elements = {
-            'root': self.root,
+            'root': self.fc.root,
             'canvas': canvas,
             'frame': frame
         }
@@ -156,17 +157,17 @@ class Application():
                             root=frame
                         )
                     
-                        self.wp.show_window(
+                        self.wp.show_main_window(
                             roots=root_elements, 
                             data=a_data, 
                             groups_pos=groups_pos
                         )
                     
                 else:
-                    self.wp.show_window(roots=root_elements, data=a_data)
+                    self.wp.show_main_window(roots=root_elements, data=a_data)
             
         else:
-            self.wp.show_window(roots=root_elements)
+            self.wp.show_main_window(roots=root_elements)
         
         frame.update_idletasks()
         
@@ -174,7 +175,7 @@ class Application():
         canvas.create_window((0, 0), window=frame, anchor=tk.NW)
         
         scrollbar = tk.Scrollbar(
-            master=self.root, 
+            master=self.fc.root, 
             width=self.cursor.right_padding+2,
             command=canvas.yview
         )
@@ -182,7 +183,7 @@ class Application():
         
         canvas.config(yscrollcommand=scrollbar.set)
         
-        self.root.mainloop()
+        self.fc.root.mainloop()
         
     def _set_cursor_values(self, data: dict) -> bool:
         """Sets certain values for Cursor.

@@ -13,7 +13,7 @@ class WindowPerformer():
     def __init__(self):
         self.canvas: tk.Canvas = None
     
-    def show_window(self, roots: dict, data: dict=None, groups_pos: list=None):
+    def show_main_window(self, roots: dict, data: dict=None, groups_pos: list=None):
         """Shows main window.
         
         Sets title, icon, screen size options to the window.
